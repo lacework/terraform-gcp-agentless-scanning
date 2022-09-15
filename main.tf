@@ -42,12 +42,51 @@ resource "google_project_service" "required_apis" {
   disable_on_destroy = false
 }
 
+// Global - The following are resources are created once per integration
+// includes the lacework cloud account integration
+// Only create global resources if global variable is set to true
+// count = var.global ? 1 : 0
+
+// Secret Manager
+resource "google_secret_manager_secret" "agentless_scan" {
+  count     = var.global ? 1 : 0
+  secret_id = "${var.prefix}-secret-${local.suffix}"
+
+  replication {
+    user_managed {
+      replicas {
+        location = var.region
+      }
+    }
+  }
+}
+
+resource "google_secret_manager_secret_version" "agentless_scan" {
+  count  = var.global ? 1 : 0
+  secret = google_secret_manager_secret.agentless_scan[0].id
+  # TODO: Add "token": "${lacework_integration_gcp_agentless_scanning.lacework_cloud_account[0].server_token}" to the secret_data
+  secret_data = <<EOF
+   {
+    "account": "${local.lacework_account}",
+
+   }
+EOF
+}
+
+resource "google_secret_manager_secret_iam_member" "member" {
+  count     = var.global ? 1 : 0
+  project   = local.project_id
+  secret_id = google_secret_manager_secret.agentless_scan[0].secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${local.agentless_scan_service_account_email}"
+}
+
 // Lacework Service Account to access Object Storage
 module "lacework_agentless_scan_svc_account" {
   count                = var.global ? 1 : 0
   source               = "lacework/service-account/gcp"
   version              = "~> 1.0"
-  create               = true # var.use_existing_service_account ? false : true
+  create               = true
   service_account_name = local.service_account_name
   project_id           = local.project_id
 }
@@ -86,44 +125,15 @@ resource "google_storage_bucket" "lacework_bucket" {
   depends_on = [google_project_service.required_apis]
 }
 
-resource "google_storage_bucket_iam_binding" "policies" {
+resource "google_storage_bucket_iam_binding" "lacework_bucket" {
+  count    = var.global ? 1 : 0
   for_each = local.bucket_roles
   role     = each.key
   members  = each.value
   bucket   = google_storage_bucket.lacework_bucket[0].name
 }
 
-// Cloud Run service for Agentless Workload Scanning
-resource "google_cloud_run_service" "agentless_scan" {
-  count    = var.regional ? 1 : 0
-  name     = "${var.prefix}-service-${local.suffix}"
-  location = var.region
-  project  = local.project_id
-
-  template {
-    spec {
-      containers {
-        image = var.image_url
-      }
-      container_concurrency = 1
-      service_account_name  = local.agentless_scan_service_account_email
-      timeout_seconds       = 3600
-    }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-
-  metadata {
-    annotations = {
-      "run.googleapis.com/ingress" : "all"
-    }
-  }
-
-  depends_on = [google_project_service.required_apis]
-}
+// IAM Configuration
 
 // Cloud Run service account
 resource "google_service_account" "agentless_scan" {
@@ -159,6 +169,7 @@ resource "google_organization_iam_member" "agentless_scan" {
   member = "serviceAccount:${local.agentless_scan_service_account_email}"
 }
 
+// Project IAM Role
 resource "google_project_iam_custom_role" "agentless_scan" {
   count   = var.global ? 1 : 0
   project = local.project_id
@@ -190,6 +201,42 @@ resource "google_project_iam_member" "invoker" {
   project = local.project_id
   role    = "roles/run.invoker"
   member  = "serviceAccount:${local.agentless_scan_service_account_email}"
+}
+
+// Regional - The following are resources created once per Google Cloud region
+// Only create regional resources if regional variable is set to true
+// count = var.regional ? 1 : 0
+
+// Cloud Run service for Agentless Workload Scanning
+resource "google_cloud_run_service" "agentless_scan" {
+  count    = var.regional ? 1 : 0
+  name     = "${var.prefix}-service-${local.suffix}"
+  location = var.region
+  project  = local.project_id
+
+  template {
+    spec {
+      containers {
+        image = var.image_url
+      }
+      container_concurrency = 1
+      service_account_name  = local.agentless_scan_service_account_email
+      timeout_seconds       = 3600
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+
+  metadata {
+    annotations = {
+      "run.googleapis.com/ingress" : "all"
+    }
+  }
+
+  depends_on = [google_project_service.required_apis]
 }
 
 data "google_compute_default_service_account" "default" {
