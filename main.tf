@@ -61,6 +61,8 @@ resource "google_secret_manager_secret" "agentless_scan" {
     }
   }
 
+  labels = merge(var.labels)
+
   depends_on = [google_project_service.required_apis]
 }
 
@@ -233,6 +235,7 @@ resource "google_cloud_run_service" "agentless_scan" {
   }
 
   metadata {
+    labels = merge(var.labels)
     annotations = {
       "run.googleapis.com/ingress" : "all"
     }
