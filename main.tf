@@ -265,6 +265,7 @@ resource "google_cloud_scheduler_job" "agentless_scan" {
     uri         = google_cloud_run_service.agentless_scan[0].status[0].url
 
     oidc_token {
+      audience              = "${google_cloud_run_service.agentless_scan[0].status[0].url}/"
       service_account_email = data.google_compute_default_service_account.default.email
     }
   }
