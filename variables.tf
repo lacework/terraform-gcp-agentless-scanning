@@ -5,6 +5,7 @@ variable "required_apis" {
     compute        = "compute.googleapis.com"
     iam            = "iam.googleapis.com"
     run            = "run.googleapis.com"
+    secretmanager  = "secretmanager.googleapis.com"
   }
 }
 

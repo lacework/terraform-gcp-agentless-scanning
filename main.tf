@@ -51,6 +51,7 @@ resource "google_project_service" "required_apis" {
 resource "google_secret_manager_secret" "agentless_scan" {
   count     = var.global ? 1 : 0
   secret_id = "${var.prefix}-secret-${local.suffix}"
+  project   = local.project_id
 
   replication {
     user_managed {
@@ -59,6 +60,8 @@ resource "google_secret_manager_secret" "agentless_scan" {
       }
     }
   }
+
+  depends_on = [google_project_service.required_apis]
 }
 
 resource "google_secret_manager_secret_version" "agentless_scan" {
@@ -126,7 +129,6 @@ resource "google_storage_bucket" "lacework_bucket" {
 }
 
 resource "google_storage_bucket_iam_binding" "lacework_bucket" {
-  count    = var.global ? 1 : 0
   for_each = local.bucket_roles
   role     = each.key
   members  = each.value
