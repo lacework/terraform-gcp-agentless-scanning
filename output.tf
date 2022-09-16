@@ -1,4 +1,4 @@
-output "agentless_scan_ecs_task_role_arn" {
+output "agentless_scan_service_account_email" {
   value       = local.agentless_scan_service_account_email
   description = "Output Cloud Run service account email."
 }
