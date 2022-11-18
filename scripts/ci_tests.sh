@@ -6,10 +6,12 @@
 #
 set -eou pipefail
 
-readonly project_name=terraform-<PROVIDER>-<NAME>
+readonly project_name=terraform-gcp-agentless-scanning
 
 TEST_CASES=(
-  examples/default
+  examples/org-level-multi-region
+  examples/org-level-single-region
+  examples/project-level-single-region
 )
 
 log() {
