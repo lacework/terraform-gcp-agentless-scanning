@@ -1,6 +1,11 @@
+output "agentless_orchestrate_service_account_email" {
+  value       = local.agentless_orchestrate_service_account_email
+  description = "Output Cloud Run service account email."
+}
+
 output "agentless_scan_service_account_email" {
   value       = local.agentless_scan_service_account_email
-  description = "Output Cloud Run service account email."
+  description = "Output Compute service account email."
 }
 
 output "service_account_name" {

@@ -35,6 +35,12 @@ variable "project_id" {
   }
 }
 
+variable "project_filter_list" {
+  type        = list(any)
+  default     = []
+  description = "A list of projects to include/exclude for integration."
+}
+
 variable "prefix" {
   type        = string
   description = "A string to be prefixed to the name of all new resources."
@@ -93,10 +99,10 @@ variable "scan_frequency_hours" {
   default     = 24
 }
 
-# TODO: Must be defined as a Google Repo - meaning we'll need to host the scanning image in GCR/GAR
 variable "image_url" {
   type        = string
   description = "The container image url for Lacework Agentless Workload Scanning."
+  default     = "us-docker.pkg.dev/cloudrun/container/hello" # TODO: Must be defined as a Google Repo - meaning we'll need to host the scanning image in GCR/GAR
 }
 
 variable "global" {
@@ -109,6 +115,12 @@ variable "regional" {
   type        = bool
   default     = false
   description = "Whether or not to create regional resources. Defaults to `false`."
+}
+
+variable "agentless_orchestrate_service_account_email" {
+  type        = string
+  default     = ""
+  description = "The email of the service account for which to use during scan tasks."
 }
 
 variable "agentless_scan_service_account_email" {
