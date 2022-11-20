@@ -8,6 +8,10 @@ locals {
 
   service_account_name     = var.global ? (length(var.service_account_name) > 0 ? var.service_account_name : "${var.prefix}-sa-${local.suffix}") : ""
   service_account_json_key = var.global ? jsondecode(base64decode(module.lacework_agentless_scan_svc_account[0].private_key)) : jsondecode("{}")
+  service_account_permissions = var.global ? toset([
+    "roles/storage.objectViewer",
+    "roles/run.invoker",
+  ]) : []
 
   included_projects = var.global ? toset([for project in var.project_filter_list : project if !(substr(project, 0, 1) == "-")]) : []
   excluded_projects = var.global ? toset([for project in var.project_filter_list : project if substr(project, 0, 1) == "-"]) : []
@@ -143,10 +147,10 @@ module "lacework_agentless_scan_svc_account" {
 }
 
 resource "google_project_iam_member" "lacework_svc_account" {
-  count = var.global ? 1 : 0
+  for_each = local.service_account_permissions
 
   project = local.project_id
-  role    = "roles/storage.objectViewer"
+  role    = each.key
   member  = "serviceAccount:${local.service_account_json_key.client_email}"
 }
 
