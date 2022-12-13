@@ -1,5 +1,6 @@
 locals {
   project_id       = length(var.project_id) > 0 ? var.project_id : data.google_project.selected.project_id
+  organization_id  = length(var.organization_id) > 0 ? var.organization_id : data.google_project.selected.org_id
   suffix           = length(var.suffix) > 0 ? var.suffix : random_id.uniq.hex
   lacework_account = length(var.lacework_account) > 0 ? var.lacework_account : trimsuffix(data.lacework_user_profile.current.url, ".${var.lacework_domain}")
 
@@ -27,6 +28,8 @@ locals {
       "serviceAccount:${local.agentless_scan_service_account_email}"
     ],
     "roles/storage.objectViewer" = [
+      "serviceAccount:${local.agentless_orchestrate_service_account_email}",
+      "serviceAccount:${local.agentless_scan_service_account_email}",
       "serviceAccount:${local.service_account_json_key.client_email}",
       "projectViewer:${local.project_id}"
     ]
@@ -174,6 +177,7 @@ resource "google_organization_iam_custom_role" "agentless_orchestrate" {
   org_id  = var.organization_id
   title   = "Lacework Agentless Workload Scanning Role (Organization Snapshots)"
   permissions = [
+    "iam.roles.get",
     "compute.disks.createSnapshot",
     "compute.disks.get",
     "compute.instances.get",
@@ -200,9 +204,30 @@ resource "google_project_iam_custom_role" "agentless_orchestrate" {
   role_id = replace("${var.prefix}-orchestrate-${local.suffix}", "-", "_")
   title   = "Lacework Agentless Workload Scanning Role (Create Scanners)"
   permissions = [
+
+    "compute.disks.list",
+    "compute.disks.delete",
+    "compute.disks.create",
+    "compute.disks.setLabels",
+    "compute.disks.use",
+
     "compute.instances.create",
     "compute.instances.setIamPolicy",
+    "compute.instances.list",
     "compute.instances.delete",
+    "compute.instances.setMetadata",
+    "compute.instances.setServiceAccount",
+
+    "compute.subnetworks.use",
+    "compute.subnetworks.useExternalIp",
+
+    "compute.zoneOperations.get",
+
+    "storage.objects.list",
+    "storage.objects.create",
+    "storage.objects.delete",
+    "storage.objects.get",
+
     "compute.snapshots.create",
     "compute.snapshots.delete",
     "compute.snapshots.list",
@@ -220,6 +245,15 @@ resource "google_project_iam_member" "agentless_orchestrate" {
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
+// Service Account <-> Role Binding
+resource "google_project_iam_member" "agentless_orchestrate_serviceAccount" {
+  count = var.global ? 1 : 0
+
+  project = local.project_id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
+}
+
 // Role for Snapshot Creation
 resource "google_project_iam_custom_role" "agentless_orchestrate_project" {
   for_each = setunion([local.project_id], local.included_projects)
@@ -233,6 +267,7 @@ resource "google_project_iam_custom_role" "agentless_orchestrate_project" {
     "compute.instances.get",
     "compute.instances.list",
     "compute.zones.list",
+    "compute.disks.useReadOnly",
   ]
 }
 
@@ -274,6 +309,10 @@ resource "google_project_iam_custom_role" "agentless_scan" {
   role_id = replace("${var.prefix}-scanner-${local.suffix}", "-", "_")
   title   = "Lacework Agentless Workload Scanning Role (Scanner)"
   permissions = [
+    "compute.instances.create",
+    "compute.disks.create",
+    "compute.disks.get",
+
     "compute.snapshots.delete",
     "compute.snapshots.list",
     "compute.snapshots.setLabels",
@@ -306,7 +345,53 @@ resource "google_cloud_run_service" "agentless_orchestrate" {
     spec {
       containers {
         image = var.image_url
+
+        env {
+          name  = "STARTUP_PROVIDER"
+          value = "GCP"
+        }
+        env {
+          name  = "STARTUP_RUNMODE"
+          value = "TASK"
+        }
+        env {
+          name  = "LACEWORK_APISERVER"
+          value = "${local.lacework_account}.${var.lacework_domain}"
+        }
+        env {
+          name  = "SECRET_ARN"
+          value = google_secret_manager_secret.agentless_orchestrate[0].id
+        }
+        env {
+          name  = "LOCAL_STORAGE"
+          value = "/tmp"
+        }
+        env {
+          name  = "STARTUP_SERVICE"
+          value = "ORCHESTRATE"
+        }
+        env {
+          name = "SIDEKICK_BUCKET"
+          value = "${var.prefix}-bucket-${local.suffix}"
+        }
+        env {
+          name = "SIDEKICK_REGION"
+          value = var.region
+        }
+        env {
+          name = "GCP_SCANNER_PROJECT_ID"
+          value = local.project_id
+        }
+        env {
+          name = "GCP_ORG_ID"
+          value = "organizations/${local.organization_id}"
+        }
+        env {
+          name = "GCP_SCAN_SCOPE"
+          value = var.integration_type
+	}
       }
+
       container_concurrency = 1
       service_account_name  = local.agentless_orchestrate_service_account_email
       timeout_seconds       = 3600
