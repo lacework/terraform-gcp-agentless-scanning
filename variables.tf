@@ -99,6 +99,12 @@ variable "scan_frequency_hours" {
   default     = 24
 }
 
+variable "agentless_scan_secret_id" {
+  type        = string
+  description = "The ID of the Google Secret containing the Lacework Account and Auth Token"
+  default     = ""
+}
+
 variable "image_url" {
   type        = string
   description = "The container image url for Lacework Agentless Workload Scanning."
@@ -163,4 +169,26 @@ variable "region" {
   type        = string
   default     = "us-central1"
   description = "The region in which to create resources."
+}
+
+variable "global_module_reference" {
+  type = object({
+    agentless_orchestrate_service_account_email = string
+    agentless_scan_service_account_email        = string
+    agentless_scan_secret_id                    = string
+    lacework_account                            = string
+    lacework_domain                             = string
+    prefix                                      = string
+    suffix                                      = string
+  })
+  default = {
+    agentless_orchestrate_service_account_email = ""
+    agentless_scan_service_account_email        = ""
+    agentless_scan_secret_id                    = ""
+    lacework_account                            = ""
+    lacework_domain                             = ""
+    prefix                                      = ""
+    suffix                                      = ""
+  }
+  description = "A reference to the global lacework_gcp_agentless_scanning module for this account."
 }

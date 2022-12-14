@@ -1,10 +1,16 @@
 locals {
-  project_id       = length(var.project_id) > 0 ? var.project_id : data.google_project.selected.project_id
-  suffix           = length(var.suffix) > 0 ? var.suffix : random_id.uniq.hex
-  lacework_account = length(var.lacework_account) > 0 ? var.lacework_account : trimsuffix(data.lacework_user_profile.current.url, ".${var.lacework_domain}")
+  project_id      = length(var.project_id) > 0 ? var.project_id : data.google_project.selected.project_id
+  organization_id = length(var.organization_id) > 0 ? var.organization_id : (data.google_project.selected.org_id != null ? data.google_project.selected.org_id : "")
 
-  agentless_orchestrate_service_account_email = var.global ? google_service_account.agentless_orchestrate[0].email : var.agentless_orchestrate_service_account_email
-  agentless_scan_service_account_email        = var.global ? google_service_account.agentless_scan[0].email : var.agentless_scan_service_account_email
+  agentless_orchestrate_service_account_email = var.global ? google_service_account.agentless_orchestrate[0].email : (length(var.global_module_reference.agentless_orchestrate_service_account_email) > 0 ? var.global_module_reference.agentless_orchestrate_service_account_email : var.agentless_orchestrate_service_account_email)
+  agentless_scan_service_account_email        = var.global ? google_service_account.agentless_scan[0].email : (length(var.global_module_reference.agentless_scan_service_account_email) > 0 ? var.global_module_reference.agentless_scan_service_account_email : var.agentless_scan_service_account_email)
+  agentless_scan_secret_id                    = var.global ? google_secret_manager_secret.agentless_orchestrate[0].id : (length(var.global_module_reference.agentless_scan_secret_id) > 0 ? var.global_module_reference.agentless_scan_secret_id : var.agentless_scan_secret_id)
+
+  lacework_domain  = length(var.global_module_reference.lacework_domain) > 0 ? var.global_module_reference.lacework_domain : var.lacework_domain
+  lacework_account = length(var.global_module_reference.lacework_account) > 0 ? var.global_module_reference.lacework_account : (length(var.lacework_account) > 0 ? var.lacework_account : trimsuffix(data.lacework_user_profile.current.url, ".${local.lacework_domain}"))
+
+  suffix = length(var.global_module_reference.suffix) > 0 ? var.global_module_reference.suffix : (length(var.suffix) > 0 ? var.suffix : random_id.uniq.hex)
+  prefix = length(var.global_module_reference.prefix) > 0 ? var.global_module_reference.prefix : var.prefix
 
   service_account_name     = var.global ? (length(var.service_account_name) > 0 ? var.service_account_name : "${var.prefix}-sa-${local.suffix}") : ""
   service_account_json_key = var.global ? jsondecode(base64decode(module.lacework_agentless_scan_svc_account[0].private_key)) : jsondecode("{}")
@@ -22,7 +28,7 @@ locals {
       "projectEditor:${local.project_id}",
       "projectOwner:${local.project_id}"
     ],
-    "roles/storage.objectCreator" = [
+    "roles/storage.objectAdmin" = [
       "serviceAccount:${local.agentless_orchestrate_service_account_email}",
       "serviceAccount:${local.agentless_scan_service_account_email}"
     ],
@@ -55,6 +61,23 @@ resource "google_project_service" "required_apis" {
 // Only create global resources if global variable is set to true
 // count = var.global ? 1 : 0
 
+// Lacework Cloud Account Integration
+resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" {
+  count = var.global ? 1 : 0
+
+  name                = var.lacework_integration_name
+  resource_level      = var.integration_type
+  resource_id         = length(local.organization_id) > 0 ? local.organization_id : local.project_id
+  bucket_name         = google_storage_bucket.lacework_bucket[0].name
+  scanning_project_id = local.project_id
+  credentials {
+    client_id      = local.service_account_json_key.client_id
+    private_key_id = local.service_account_json_key.private_key_id
+    client_email   = local.service_account_json_key.client_email
+    private_key    = local.service_account_json_key.private_key
+  }
+}
+
 // Secret Manager
 resource "google_secret_manager_secret" "agentless_orchestrate" {
   count = var.global ? 1 : 0
@@ -78,12 +101,12 @@ resource "google_secret_manager_secret" "agentless_orchestrate" {
 resource "google_secret_manager_secret_version" "agentless_orchestrate" {
   count = var.global ? 1 : 0
 
-  secret = google_secret_manager_secret.agentless_orchestrate[0].id
-  # TODO: Add "token": "${lacework_integration_gcp_agentless_scanning.lacework_cloud_account[0].server_token}" to the secret_data
+  secret      = google_secret_manager_secret.agentless_orchestrate[0].id
   secret_data = <<EOF
    {
     "account": "${local.lacework_account}",
     "scanner_service_account": "${local.agentless_scan_service_account_email}",
+    "token": "${lacework_integration_gcp_agentless_scanning.lacework_cloud_account[0].server_token}",
    }
 EOF
 }
@@ -200,14 +223,25 @@ resource "google_project_iam_custom_role" "agentless_orchestrate" {
   role_id = replace("${var.prefix}-orchestrate-${local.suffix}", "-", "_")
   title   = "Lacework Agentless Workload Scanning Role (Create Scanners)"
   permissions = [
+    "compute.disks.create",
+    "compute.disks.delete",
+    "compute.disks.list",
+    "compute.disks.setLabels",
+    "compute.disks.use",
     "compute.instances.create",
     "compute.instances.setIamPolicy",
     "compute.instances.delete",
+    "compute.instances.list",
+    "compute.instances.setMetadata",
+    "compute.instances.setServiceAccount",
     "compute.snapshots.create",
     "compute.snapshots.delete",
     "compute.snapshots.list",
     "compute.snapshots.setLabels",
     "compute.snapshots.useReadOnly",
+    "compute.subnetworks.use",
+    "compute.subnetworks.useExternalIp",
+    "compute.zoneOperations.get",
   ]
 }
 
@@ -230,6 +264,7 @@ resource "google_project_iam_custom_role" "agentless_orchestrate_project" {
   permissions = [
     "compute.disks.createSnapshot",
     "compute.disks.get",
+    "compute.disks.useReadOnly",
     "compute.instances.get",
     "compute.instances.list",
     "compute.zones.list",
@@ -254,6 +289,15 @@ resource "google_project_iam_member" "agentless_orchestrate_invoker" {
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
+// Role for assigning Service Accounts to Compute
+resource "google_project_iam_member" "agentless_orchestrate_service_account" {
+  count = var.global ? 1 : 0
+
+  project = local.project_id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
+}
+
 // Service Account for Scanners
 resource "google_service_account" "agentless_scan" {
   count = var.global ? 1 : 0
@@ -274,6 +318,9 @@ resource "google_project_iam_custom_role" "agentless_scan" {
   role_id = replace("${var.prefix}-scanner-${local.suffix}", "-", "_")
   title   = "Lacework Agentless Workload Scanning Role (Scanner)"
   permissions = [
+    "compute.disks.create",
+    "compute.disks.get",
+    "compute.instances.create",
     "compute.snapshots.delete",
     "compute.snapshots.list",
     "compute.snapshots.setLabels",
@@ -295,33 +342,71 @@ resource "google_project_iam_member" "agentless_scan" {
 // count = var.regional ? 1 : 0
 
 // Cloud Run service for Agentless Workload Scanning
-resource "google_cloud_run_service" "agentless_orchestrate" {
+resource "google_cloud_run_v2_job" "agentless_orchestrate" {
   count = var.regional ? 1 : 0
 
-  name     = "${var.prefix}-service-${local.suffix}"
-  location = var.region
-  project  = local.project_id
+  name         = "${var.prefix}-service-${local.suffix}"
+  location     = var.region
+  launch_stage = "BETA"
+  project      = local.project_id
 
   template {
-    spec {
+    template {
       containers {
         image = var.image_url
+
+        env {
+          name  = "STARTUP_PROVIDER"
+          value = "GCP"
+        }
+        env {
+          name  = "STARTUP_RUNMODE"
+          value = "TASK"
+        }
+        env {
+          name  = "LACEWORK_APISERVER"
+          value = "${local.lacework_account}.${var.lacework_domain}"
+        }
+        env {
+          name  = "SECRET_ARN"
+          value = local.agentless_scan_secret_id
+        }
+        env {
+          name  = "LOCAL_STORAGE"
+          value = "/tmp"
+        }
+        env {
+          name  = "STARTUP_SERVICE"
+          value = "ORCHESTRATE"
+        }
+        env {
+          name  = "SIDEKICK_BUCKET"
+          value = local.bucket_name
+        }
+        env {
+          name  = "SIDEKICK_REGION"
+          value = var.region
+        }
+        env {
+          name  = "GCP_SCANNER_PROJECT_ID"
+          value = local.project_id
+        }
+        env {
+          name  = "GCP_ORG_ID"
+          value = "organizations/${local.organization_id}"
+        }
+        env {
+          name  = "GCP_SCAN_SCOPE"
+          value = var.integration_type
+        }
+        # env {
+        #   name  = "GCP_SCAN_RES_ID"
+        #   value = local.included_projects
+        # }
+
       }
-      container_concurrency = 1
-      service_account_name  = local.agentless_orchestrate_service_account_email
-      timeout_seconds       = 3600
-    }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-
-  metadata {
-    labels = merge(var.labels)
-    annotations = {
-      "run.googleapis.com/ingress" : "all"
+      service_account = local.agentless_orchestrate_service_account_email
+      timeout         = "3600s"
     }
   }
 
@@ -347,10 +432,9 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
 
   http_target {
     http_method = "POST"
-    uri         = google_cloud_run_service.agentless_orchestrate[0].status[0].url
+    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${local.project_id}/jobs/${var.prefix}-service-${local.suffix}:run"
 
-    oidc_token {
-      audience              = "${google_cloud_run_service.agentless_orchestrate[0].status[0].url}/"
+    oauth_token {
       service_account_email = data.google_compute_default_service_account.default.email
     }
   }

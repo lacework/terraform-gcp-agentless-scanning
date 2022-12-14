@@ -32,6 +32,6 @@ module "lacework_gcp_agentless_scanning_org_multi_region_usc1" {
     google = google.usc1
   }
 
-  regional                                    = true
-  agentless_orchestrate_service_account_email = module.lacework_gcp_agentless_scanning_org_multi_region.agentless_orchestrate_service_account_email
+  regional                = true
+  global_module_reference = module.lacework_gcp_agentless_scanning_org_multi_region
 }

@@ -19,8 +19,8 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.43.1 |
-| <a name="provider_lacework"></a> [lacework](#provider\_lacework) | 1.0.1 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.46.0 |
+| <a name="provider_lacework"></a> [lacework](#provider\_lacework) | 1.3.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.4.3 |
 
 ## Modules
@@ -33,7 +33,7 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 
 | Name | Type |
 |------|------|
-| [google_cloud_run_service.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_service) | resource |
+| [google_cloud_run_v2_job.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_job) | resource |
 | [google_cloud_scheduler_job.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_scheduler_job) | resource |
 | [google_organization_iam_custom_role.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/organization_iam_custom_role) | resource |
 | [google_organization_iam_member.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/organization_iam_member) | resource |
@@ -43,6 +43,7 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | [google_project_iam_member.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.agentless_orchestrate_invoker](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.agentless_orchestrate_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_project_iam_member.agentless_orchestrate_service_account](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.agentless_scan](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.lacework_svc_account](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_service.required_apis](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_service) | resource |
@@ -53,6 +54,7 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | [google_service_account.agentless_scan](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
 | [google_storage_bucket.lacework_bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket) | resource |
 | [google_storage_bucket_iam_binding.lacework_bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_binding) | resource |
+| [lacework_integration_gcp_agentless_scanning.lacework_cloud_account](https://registry.terraform.io/providers/lacework/lacework/latest/docs/resources/integration_gcp_agentless_scanning) | resource |
 | [random_id.uniq](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [google_compute_default_service_account.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_default_service_account) | data source |
 | [google_project.selected](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
@@ -63,13 +65,13 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_agentless_orchestrate_service_account_email"></a> [agentless\_orchestrate\_service\_account\_email](#input\_agentless\_orchestrate\_service\_account\_email) | The email of the service account for which to use during scan tasks. | `string` | `""` | no |
+| <a name="input_agentless_scan_secret_id"></a> [agentless\_scan\_secret\_id](#input\_agentless\_scan\_secret\_id) | The ID of the Google Secret containing the Lacework Account and Auth Token | `string` | `""` | no |
 | <a name="input_agentless_scan_service_account_email"></a> [agentless\_scan\_service\_account\_email](#input\_agentless\_scan\_service\_account\_email) | The email of the service account for which to use during scan tasks. | `string` | `""` | no |
 | <a name="input_bucket_enable_ubla"></a> [bucket\_enable\_ubla](#input\_bucket\_enable\_ubla) | Boolean for enabling Uniform Bucket Level Access on the created bucket.  Default is `true`. | `bool` | `true` | no |
 | <a name="input_bucket_force_destroy"></a> [bucket\_force\_destroy](#input\_bucket\_force\_destroy) | Force destroy bucket (Required when bucket not empty) | `bool` | `true` | no |
 | <a name="input_bucket_lifecycle_rule_age"></a> [bucket\_lifecycle\_rule\_age](#input\_bucket\_lifecycle\_rule\_age) | Number of days to keep agentless scan objects in bucket before deletion. | `number` | `30` | no |
-| <a name="input_folders_to_exclude"></a> [folders\_to\_exclude](#input\_folders\_to\_exclude) | List of root folders to exclude in an organization-level integration.  Format is 'folders/1234567890' | `list(string)` | `[]` | no |
-| <a name="input_folders_to_include"></a> [folders\_to\_include](#input\_folders\_to\_include) | List of root folders to include in an organization-level integration.  Format is 'folders/1234567890' | `set(string)` | `[]` | no |
 | <a name="input_global"></a> [global](#input\_global) | Whether or not to create global resources. Defaults to `false`. | `bool` | `false` | no |
+| <a name="input_global_module_reference"></a> [global\_module\_reference](#input\_global\_module\_reference) | A reference to the global lacework\_gcp\_agentless\_scanning module for this account. | <pre>object({<br>    agentless_orchestrate_service_account_email = string<br>    agentless_scan_service_account_email        = string<br>    agentless_scan_secret_id                    = string<br>    lacework_account                            = string<br>    lacework_domain                             = string<br>    prefix                                      = string<br>    suffix                                      = string<br>  })</pre> | <pre>{<br>  "agentless_orchestrate_service_account_email": "",<br>  "agentless_scan_secret_id": "",<br>  "agentless_scan_service_account_email": "",<br>  "lacework_account": "",<br>  "lacework_domain": "",<br>  "prefix": "",<br>  "suffix": ""<br>}</pre> | no |
 | <a name="input_image_url"></a> [image\_url](#input\_image\_url) | The container image url for Lacework Agentless Workload Scanning. | `string` | `"us-docker.pkg.dev/cloudrun/container/hello"` | no |
 | <a name="input_integration_type"></a> [integration\_type](#input\_integration\_type) | Specify the integration type. Can only be PROJECT or ORGANIZATION. Defaults to PROJECT | `string` | `"PROJECT"` | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | Set of labels which will be added to the resources managed by the module. | `map(string)` | `{}` | no |
@@ -94,7 +96,12 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | Name | Description |
 |------|-------------|
 | <a name="output_agentless_orchestrate_service_account_email"></a> [agentless\_orchestrate\_service\_account\_email](#output\_agentless\_orchestrate\_service\_account\_email) | Output Cloud Run service account email. |
+| <a name="output_agentless_scan_secret_id"></a> [agentless\_scan\_secret\_id](#output\_agentless\_scan\_secret\_id) | Google Secret Manager ID for Lacework Account and Token. |
 | <a name="output_agentless_scan_service_account_email"></a> [agentless\_scan\_service\_account\_email](#output\_agentless\_scan\_service\_account\_email) | Output Compute service account email. |
 | <a name="output_bucket_name"></a> [bucket\_name](#output\_bucket\_name) | The storage bucket name for Agentless Workload Scanning data. |
+| <a name="output_lacework_account"></a> [lacework\_account](#output\_lacework\_account) | Lacework Account Name for Integration. |
+| <a name="output_lacework_domain"></a> [lacework\_domain](#output\_lacework\_domain) | Lacework Domain Name for Integration. |
+| <a name="output_prefix"></a> [prefix](#output\_prefix) | Prefix used to add uniqueness to resource names. |
 | <a name="output_service_account_name"></a> [service\_account\_name](#output\_service\_account\_name) | The service account name for Lacework. |
 | <a name="output_service_account_private_key"></a> [service\_account\_private\_key](#output\_service\_account\_private\_key) | The base64 encoded private key in JSON format for Lacework. |
+| <a name="output_suffix"></a> [suffix](#output\_suffix) | Suffix used to add uniqueness to resource names. |
