@@ -33,6 +33,8 @@ locals {
       "serviceAccount:${local.agentless_scan_service_account_email}"
     ],
     "roles/storage.objectViewer" = [
+      "serviceAccount:${local.agentless_orchestrate_service_account_email}",
+      "serviceAccount:${local.agentless_scan_service_account_email}",
       "serviceAccount:${local.service_account_json_key.client_email}",
       "projectViewer:${local.project_id}"
     ]
@@ -197,6 +199,7 @@ resource "google_organization_iam_custom_role" "agentless_orchestrate" {
   org_id  = var.organization_id
   title   = "Lacework Agentless Workload Scanning Role (Organization Snapshots)"
   permissions = [
+    "iam.roles.get",
     "compute.disks.createSnapshot",
     "compute.disks.get",
     "compute.instances.get",
@@ -230,6 +233,7 @@ resource "google_project_iam_custom_role" "agentless_orchestrate" {
     "compute.disks.use",
     "compute.instances.create",
     "compute.instances.setIamPolicy",
+    "compute.instances.list",
     "compute.instances.delete",
     "compute.instances.list",
     "compute.instances.setMetadata",
@@ -254,6 +258,15 @@ resource "google_project_iam_member" "agentless_orchestrate" {
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
+// Service Account <-> Role Binding
+resource "google_project_iam_member" "agentless_orchestrate_serviceAccount" {
+  count = var.global ? 1 : 0
+
+  project = local.project_id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
+}
+
 // Role for Snapshot Creation
 resource "google_project_iam_custom_role" "agentless_orchestrate_project" {
   for_each = setunion([local.project_id], local.included_projects)
@@ -268,6 +281,7 @@ resource "google_project_iam_custom_role" "agentless_orchestrate_project" {
     "compute.instances.get",
     "compute.instances.list",
     "compute.zones.list",
+    "compute.disks.useReadOnly",
   ]
 }
 
