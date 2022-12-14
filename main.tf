@@ -72,6 +72,7 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
   resource_id         = length(local.organization_id) > 0 ? local.organization_id : local.project_id
   bucket_name         = google_storage_bucket.lacework_bucket[0].name
   scanning_project_id = local.project_id
+  filter_list         = var.project_filter_list
   credentials {
     client_id      = local.service_account_json_key.client_id
     private_key_id = local.service_account_json_key.private_key_id
