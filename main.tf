@@ -108,7 +108,7 @@ resource "google_secret_manager_secret_version" "agentless_orchestrate" {
    {
     "account": "${local.lacework_account}",
     "scanner_service_account": "${local.agentless_scan_service_account_email}",
-    "token": "${lacework_integration_gcp_agentless_scanning.lacework_cloud_account[0].server_token}",
+    "token": "${lacework_integration_gcp_agentless_scanning.lacework_cloud_account[0].server_token}"
    }
 EOF
 }
@@ -413,10 +413,10 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
           name  = "GCP_SCAN_SCOPE"
           value = var.integration_type
         }
-        # env {
-        #   name  = "GCP_SCAN_RES_ID"
-        #   value = local.included_projects
-        # }
+        env {
+          name  = "GCP_SCAN_RES_ID"
+          value = var.project_filter_list[0] #join(", ", var.project_filter_list[0])
+        }
 
       }
       service_account = local.agentless_orchestrate_service_account_email
