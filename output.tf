@@ -19,12 +19,12 @@ output "bucket_name" {
 }
 
 output "lacework_account" {
-  value       = var.lacework_account
+  value       = local.lacework_account
   description = "Lacework Account Name for Integration."
 }
 
 output "lacework_domain" {
-  value       = var.lacework_domain
+  value       = local.lacework_domain
   description = "Lacework Domain Name for Integration."
 }
 
