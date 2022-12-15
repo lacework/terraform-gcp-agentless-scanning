@@ -370,6 +370,13 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
       containers {
         image = var.image_url
 
+        resources {
+          limits = {
+            cpu    = "4"
+            memory = "8Gi"
+          }
+        }
+
         env {
           name  = "STARTUP_PROVIDER"
           value = "GCP"
