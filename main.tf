@@ -247,6 +247,10 @@ resource "google_project_iam_custom_role" "agentless_orchestrate" {
     "compute.subnetworks.use",
     "compute.subnetworks.useExternalIp",
     "compute.zoneOperations.get",
+    "storage.objects.list",
+    "storage.objects.create",
+    "storage.objects.delete",
+    "storage.objects.get",
   ]
 }
 
