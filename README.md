@@ -12,8 +12,8 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12.31 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.0 |
-| <a name="requirement_lacework"></a> [lacework](#requirement\_lacework) | ~> 1.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.46 |
+| <a name="requirement_lacework"></a> [lacework](#requirement\_lacework) | ~> 1.3 |
 
 ## Providers
 
