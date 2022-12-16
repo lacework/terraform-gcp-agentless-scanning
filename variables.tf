@@ -25,12 +25,12 @@ variable "organization_id" {
   description = "The organization ID, required if integration_type is set to ORGANIZATION"
 }
 
-variable "project_id" {
+variable "scanning_project_id" {
   type        = string
   default     = ""
-  description = "A project ID different from the default defined inside the provider"
+  description = "A project ID different from the default defined inside the provider - used for scanning resources"
   validation {
-    condition     = can(regex("(^[a-z][a-z0-9_-]{6,30}[^-]$|^$)", var.project_id))
+    condition     = can(regex("(^[a-z][a-z0-9_-]{6,30}[^-]$|^$)", var.scanning_project_id))
     error_message = "The project_id variable must be a valid GCP project ID. It must be 6 to 30 lowercase ASCII letters, digits, or hyphens. It must start with a letter. Trailing hyphens are prohibited.. Example: tokyo-rain-123."
   }
 }

@@ -44,6 +44,7 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | [google_project_iam_member.agentless_orchestrate_invoker](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.agentless_orchestrate_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.agentless_orchestrate_service_account](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_project_iam_member.agentless_orchestrate_service_account_user](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.agentless_scan](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.lacework_svc_account](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_service.required_apis](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_service) | resource |
@@ -81,13 +82,13 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | <a name="input_organization_id"></a> [organization\_id](#input\_organization\_id) | The organization ID, required if integration\_type is set to ORGANIZATION | `string` | `""` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | A string to be prefixed to the name of all new resources. | `string` | `"lacework-awls"` | no |
 | <a name="input_project_filter_list"></a> [project\_filter\_list](#input\_project\_filter\_list) | A list of projects to include/exclude for integration. | `list(any)` | `[]` | no |
-| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | A project ID different from the default defined inside the provider | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region in which to create resources. | `string` | `"us-central1"` | no |
 | <a name="input_regional"></a> [regional](#input\_regional) | Whether or not to create regional resources. Defaults to `false`. | `bool` | `false` | no |
 | <a name="input_required_apis"></a> [required\_apis](#input\_required\_apis) | n/a | `map(any)` | <pre>{<br>  "cloudscheduler": "cloudscheduler.googleapis.com",<br>  "compute": "compute.googleapis.com",<br>  "iam": "iam.googleapis.com",<br>  "run": "run.googleapis.com",<br>  "secretmanager": "secretmanager.googleapis.com"<br>}</pre> | no |
 | <a name="input_scan_containers"></a> [scan\_containers](#input\_scan\_containers) | Whether to includes scanning for containers.  Defaults to `true`. | `bool` | `true` | no |
 | <a name="input_scan_frequency_hours"></a> [scan\_frequency\_hours](#input\_scan\_frequency\_hours) | How often in hours the scan will run in hours. Defaults to `24`. | `number` | `24` | no |
 | <a name="input_scan_host_vulnerabilities"></a> [scan\_host\_vulnerabilities](#input\_scan\_host\_vulnerabilities) | Whether to includes scanning for host vulnerabilities.  Defaults to `true`. | `bool` | `true` | no |
+| <a name="input_scanning_project_id"></a> [scanning\_project\_id](#input\_scanning\_project\_id) | A project ID different from the default defined inside the provider - used for scanning resources | `string` | `""` | no |
 | <a name="input_service_account_name"></a> [service\_account\_name](#input\_service\_account\_name) | The name of the service account Lacework will use to access scan results. | `string` | `""` | no |
 | <a name="input_suffix"></a> [suffix](#input\_suffix) | A string to be appended to the end of the name of all new resources. | `string` | `""` | no |
 

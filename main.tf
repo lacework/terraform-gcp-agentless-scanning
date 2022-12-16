@@ -1,6 +1,6 @@
 locals {
-  project_id      = length(var.project_id) > 0 ? var.project_id : data.google_project.selected.project_id
-  organization_id = length(var.organization_id) > 0 ? var.organization_id : (data.google_project.selected.org_id != null ? data.google_project.selected.org_id : "")
+  scanning_project_id = length(var.scanning_project_id) > 0 ? var.scanning_project_id : data.google_project.selected.project_id
+  organization_id     = length(var.organization_id) > 0 ? var.organization_id : (data.google_project.selected.org_id != null ? data.google_project.selected.org_id : "")
 
   agentless_orchestrate_service_account_email = var.global ? google_service_account.agentless_orchestrate[0].email : (length(var.global_module_reference.agentless_orchestrate_service_account_email) > 0 ? var.global_module_reference.agentless_orchestrate_service_account_email : var.agentless_orchestrate_service_account_email)
   agentless_scan_service_account_email        = var.global ? google_service_account.agentless_scan[0].email : (length(var.global_module_reference.agentless_scan_service_account_email) > 0 ? var.global_module_reference.agentless_scan_service_account_email : var.agentless_scan_service_account_email)
@@ -25,18 +25,16 @@ locals {
   bucket_name = var.global ? google_storage_bucket.lacework_bucket[0].name : ""
   bucket_roles = var.global ? ({
     "roles/storage.admin" = [
-      "projectEditor:${local.project_id}",
-      "projectOwner:${local.project_id}"
+      "projectEditor:${local.scanning_project_id}",
+      "projectOwner:${local.scanning_project_id}"
     ],
     "roles/storage.objectAdmin" = [
       "serviceAccount:${local.agentless_orchestrate_service_account_email}",
       "serviceAccount:${local.agentless_scan_service_account_email}"
     ],
     "roles/storage.objectViewer" = [
-      "serviceAccount:${local.agentless_orchestrate_service_account_email}",
-      "serviceAccount:${local.agentless_scan_service_account_email}",
       "serviceAccount:${local.service_account_json_key.client_email}",
-      "projectViewer:${local.project_id}"
+      "projectViewer:${local.scanning_project_id}"
     ]
   }) : ({})
 }
@@ -52,7 +50,7 @@ data "google_project" "selected" {}
 resource "google_project_service" "required_apis" {
   for_each = var.required_apis
 
-  project = local.project_id
+  project = local.scanning_project_id
   service = each.value
 
   disable_on_destroy = false
@@ -69,9 +67,9 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
 
   name                = var.lacework_integration_name
   resource_level      = var.integration_type
-  resource_id         = length(local.organization_id) > 0 ? local.organization_id : local.project_id
+  resource_id         = length(local.organization_id) > 0 ? local.organization_id : local.scanning_project_id
   bucket_name         = google_storage_bucket.lacework_bucket[0].name
-  scanning_project_id = local.project_id
+  scanning_project_id = local.scanning_project_id
   filter_list         = var.project_filter_list
   credentials {
     client_id      = local.service_account_json_key.client_id
@@ -86,7 +84,7 @@ resource "google_secret_manager_secret" "agentless_orchestrate" {
   count = var.global ? 1 : 0
 
   secret_id = "${var.prefix}-secret-${local.suffix}"
-  project   = local.project_id
+  project   = local.scanning_project_id
 
   replication {
     user_managed {
@@ -117,7 +115,7 @@ EOF
 resource "google_secret_manager_secret_iam_member" "member" {
   count = var.global ? 1 : 0
 
-  project   = local.project_id
+  project   = local.scanning_project_id
   secret_id = google_secret_manager_secret.agentless_orchestrate[0].secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
@@ -127,7 +125,7 @@ resource "google_secret_manager_secret_iam_member" "member" {
 resource "google_storage_bucket" "lacework_bucket" {
   count = var.global ? 1 : 0
 
-  project       = local.project_id
+  project       = local.scanning_project_id
   name          = "${var.prefix}-bucket-${local.suffix}"
   force_destroy = var.bucket_force_destroy
   location      = var.region
@@ -169,13 +167,13 @@ module "lacework_agentless_scan_svc_account" {
   version              = "~> 1.0"
   create               = true
   service_account_name = local.service_account_name
-  project_id           = local.project_id
+  project_id           = local.scanning_project_id
 }
 
 resource "google_project_iam_member" "lacework_svc_account" {
   for_each = local.service_account_permissions
 
-  project = local.project_id
+  project = local.scanning_project_id
   role    = each.key
   member  = "serviceAccount:${local.service_account_json_key.client_email}"
 }
@@ -187,7 +185,7 @@ resource "google_service_account" "agentless_orchestrate" {
   account_id   = "${var.prefix}-orchestrate-${local.suffix}"
   description  = "Cloud Run service account for Lacework Agentless Workload Scanning orchestration"
   display_name = "${var.prefix}-orchestrate-${local.suffix}"
-  project      = local.project_id
+  project      = local.scanning_project_id
 
   depends_on = [google_project_service.required_apis]
 }
@@ -223,7 +221,7 @@ resource "google_organization_iam_member" "agentless_orchestrate" {
 resource "google_project_iam_custom_role" "agentless_orchestrate" {
   count = var.global ? 1 : 0
 
-  project = local.project_id
+  project = local.scanning_project_id
   role_id = replace("${var.prefix}-orchestrate-${local.suffix}", "-", "_")
   title   = "Lacework Agentless Workload Scanning Role (Create Scanners)"
   permissions = [
@@ -258,23 +256,23 @@ resource "google_project_iam_custom_role" "agentless_orchestrate" {
 resource "google_project_iam_member" "agentless_orchestrate" {
   count = var.global ? 1 : 0
 
-  project = local.project_id
+  project = local.scanning_project_id
   role    = google_project_iam_custom_role.agentless_orchestrate[0].id
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
 // Service Account <-> Role Binding
-resource "google_project_iam_member" "agentless_orchestrate_serviceAccount" {
+resource "google_project_iam_member" "agentless_orchestrate_service_account_user" {
   count = var.global ? 1 : 0
 
-  project = local.project_id
+  project = local.scanning_project_id
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
 // Role for Snapshot Creation
 resource "google_project_iam_custom_role" "agentless_orchestrate_project" {
-  for_each = setunion([local.project_id], local.included_projects)
+  for_each = setunion([local.scanning_project_id], local.included_projects)
 
   project = each.key
   role_id = replace("${var.prefix}-snapshot-${local.suffix}", "-", "_")
@@ -303,7 +301,7 @@ resource "google_project_iam_member" "agentless_orchestrate_project" {
 resource "google_project_iam_member" "agentless_orchestrate_invoker" {
   count = var.global ? 1 : 0
 
-  project = local.project_id
+  project = local.scanning_project_id
   role    = "roles/run.invoker"
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
@@ -312,7 +310,7 @@ resource "google_project_iam_member" "agentless_orchestrate_invoker" {
 resource "google_project_iam_member" "agentless_orchestrate_service_account" {
   count = var.global ? 1 : 0
 
-  project = local.project_id
+  project = local.scanning_project_id
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
@@ -324,7 +322,7 @@ resource "google_service_account" "agentless_scan" {
   account_id   = "${var.prefix}-scanner-${local.suffix}"
   description  = "Compute service account for Lacework Agentless Workload Scanning"
   display_name = "${var.prefix}-scanner-${local.suffix}"
-  project      = local.project_id
+  project      = local.scanning_project_id
 
   depends_on = [google_project_service.required_apis]
 }
@@ -333,7 +331,7 @@ resource "google_service_account" "agentless_scan" {
 resource "google_project_iam_custom_role" "agentless_scan" {
   count = var.global ? 1 : 0
 
-  project = local.project_id
+  project = local.scanning_project_id
   role_id = replace("${var.prefix}-scanner-${local.suffix}", "-", "_")
   title   = "Lacework Agentless Workload Scanning Role (Scanner)"
   permissions = [
@@ -351,7 +349,7 @@ resource "google_project_iam_custom_role" "agentless_scan" {
 resource "google_project_iam_member" "agentless_scan" {
   count = var.global ? 1 : 0
 
-  project = local.project_id
+  project = local.scanning_project_id
   role    = google_project_iam_custom_role.agentless_scan[0].id
   member  = "serviceAccount:${local.agentless_scan_service_account_email}"
 }
@@ -367,7 +365,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
   name         = "${var.prefix}-service-${local.suffix}"
   location     = var.region
   launch_stage = "BETA"
-  project      = local.project_id
+  project      = local.scanning_project_id
 
   template {
     template {
@@ -415,7 +413,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
         }
         env {
           name  = "GCP_SCANNER_PROJECT_ID"
-          value = local.project_id
+          value = local.scanning_project_id
         }
         env {
           name  = "GCP_ORG_ID"
@@ -440,7 +438,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
 }
 
 data "google_compute_default_service_account" "default" {
-  project = local.project_id
+  project = local.scanning_project_id
 
   depends_on = [google_project_service.required_apis]
 }
@@ -451,14 +449,14 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
 
   name        = "${var.prefix}-periodic-trigger-${local.suffix}"
   description = "Invoke Lacework Agentless Workload Scanning on a schedule."
-  project     = local.project_id
+  project     = local.scanning_project_id
   region      = var.region
   schedule    = "0 * * * *"
   time_zone   = "Etc/UTC"
 
   http_target {
     http_method = "POST"
-    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${local.project_id}/jobs/${var.prefix}-service-${local.suffix}:run"
+    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${local.scanning_project_id}/jobs/${var.prefix}-service-${local.suffix}:run"
 
     oauth_token {
       service_account_email = data.google_compute_default_service_account.default.email
