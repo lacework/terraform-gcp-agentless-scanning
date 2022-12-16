@@ -424,7 +424,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
           value = var.integration_type
         }
         env {
-          name  = "GCP_SCAN_RES_ID"
+          name  = "GCP_SCAN_LIST"
           value = join(", ", var.project_filter_list)
         }
 

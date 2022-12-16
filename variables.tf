@@ -108,7 +108,7 @@ variable "agentless_scan_secret_id" {
 variable "image_url" {
   type        = string
   description = "The container image url for Lacework Agentless Workload Scanning."
-  default     = "us-docker.pkg.dev/cloudrun/container/hello" # TODO: Must be defined as a Google Repo - meaning we'll need to host the scanning image in GCR/GAR
+  default     = "us-docker.pkg.dev/agentless-sidekick-images-tl48/sidekick/sidekick"
 }
 
 variable "global" {
