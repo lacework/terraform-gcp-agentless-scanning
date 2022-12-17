@@ -19,14 +19,14 @@ Read the [README.md](README.md) and
 
 ## Reporting Bugs
 
-Ensure the issue you are raising has not already been created under [issues](https://github.com/lacework/terraform-<PROVIDER>-<NAME>/issues).
-If no current issue addresses the problem, open a new [issue](https://github.com/lacework/terraform-<PROVIDER>-<NAME>/issues/new).
-Include as much relevant information as possible. See the [bug template](https://github.com/lacework/terraform-<PROVIDER>-<NAME>/blob/main/.github/ISSUE_TEMPLATE/bug_report.md) for help on creating a new issue.
+Ensure the issue you are raising has not already been created under [issues](https://github.com/lacework/terraform-gcp-agentless-scanning/issues).
+If no current issue addresses the problem, open a new [issue](https://github.com/lacework/terraform-gcp-agentless-scanning/issues/new).
+Include as much relevant information as possible. See the [bug template](https://github.com/lacework/terraform-gcp-agentless-scanning/blob/main/.github/ISSUE_TEMPLATE/bug_report.md) for help on creating a new issue.
 
 ## Feature Requests
 
-If you wish to submit a request to add new functionality or an improvement to a terraform module then use the the [feature request](https://github.com/lacework/terraform-<PROVIDER>-<NAME>/blob/main/.github/ISSUE_TEMPLATE/feature_request.md) template to 
-open a new [issue](https://github.com/lacework/terraform-<PROVIDER>-<NAME>/issues/new)
+If you wish to submit a request to add new functionality or an improvement to a terraform module then use the the [feature request](https://github.com/lacework/terraform-gcp-agentless-scanning/blob/main/.github/ISSUE_TEMPLATE/feature_request.md) template to 
+open a new [issue](https://github.com/lacework/terraform-gcp-agentless-scanning/issues/new)
 
 ## Creating a Pull Request
 
