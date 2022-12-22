@@ -11,6 +11,7 @@ readonly project_name=terraform-gcp-agentless-scanning
 TEST_CASES=(
   examples/org-level-multi-region
   examples/org-level-single-region
+  examples/project-level-multi-region
   examples/project-level-single-region
 )
 

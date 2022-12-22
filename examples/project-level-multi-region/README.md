@@ -1,4 +1,4 @@
-# Google Cloud Organization-Level for Multiple Regions
+# Google Cloud Project-Level for Multiple Regions
 
 In this example we add Terraform modules to two Google Cloud regions.
 
@@ -25,7 +25,7 @@ provider "google" {
   region = "us-central1"
 }
 
-module "lacework_gcp_agentless_scanning_org_multi_region" {
+module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
   source  = "lacework/agentless-scanning/gcp"
   version = "~> 0.1"
 
@@ -33,15 +33,17 @@ module "lacework_gcp_agentless_scanning_org_multi_region" {
     google = google.use1
   }
 
-  integration_type = "ORGANIZATION"
-  organization_id  = "123456789012"
+  project_filter_list = [
+    "monitored-project-1",
+    "monitored-project-2"
+  ]
 
   global                    = true
   regional                  = true
   lacework_integration_name = "agentless_from_terraform"
 }
 
-module "lacework_gcp_agentless_scanning_org_multi_region_usc1" {
+module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
   source  = "lacework/agentless-scanning/gcp"
   version = "~> 0.1"
 
@@ -50,6 +52,6 @@ module "lacework_gcp_agentless_scanning_org_multi_region_usc1" {
   }
 
   regional                = true
-  global_module_reference = module.lacework_gcp_agentless_scanning_org_multi_region
+  global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_use1
 }
 ```

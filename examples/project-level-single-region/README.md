@@ -1,9 +1,18 @@
-# Project-Level with Single Region Example
+# Google Cloud Project-Level for a Single Region
 
-Every Terraform module must have one or more examples.
+In this example we add Terraform modules to one Google Cloud region.
+
+- Global resources are deployed to the default Google provider region.
+  - Service Accounts/Permissions
+  - Object Storage Bucket
+  - Secret Manager Secret
+- Regional resources are deployed to the default Google provider region.
+  - Cloud Run Job
+  - Cloud Scheduler Job
+
+## Sample Code
 
 ```hcl
-
 provider "lacework" {}
 
 provider "google" {}
@@ -12,7 +21,6 @@ module "lacework_gcp_agentless_scanning_project_single_region" {
   source  = "lacework/agentless-scanning/gcp"
   version = "~> 0.1"
 
-  project_id = "lacework-stitch-nixlab"
   project_filter_list = [
     "monitored-project-1",
     "monitored-project-2"
@@ -23,9 +31,3 @@ module "lacework_gcp_agentless_scanning_project_single_region" {
   lacework_integration_name = "agentless_from_terraform"
 }
 ```
-
-In this example the **global** resources and **regional** resources are added.
-Global resources include the per-project resources like service accounts,
-roles, and object storage. Regional resources include a Cloud Scheduler Job, and
-Cloud Run Service.
-This example uses a single module to add both types of resources.
