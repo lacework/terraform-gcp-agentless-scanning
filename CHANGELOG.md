@@ -1,3 +1,10 @@
+# v0.1.1
+
+## Documentation Updates
+* docs: updated examples and added project-level multi-region (#5) (Alan Nix)([67e464a](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/67e464a251d734dd9b00348b21276d34a34c5f9e))
+## Other Changes
+* ci: version bump to v0.1.1-dev (Lacework)([1d53030](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/1d530305b07941fa58462a2b65b001e8da99e596))
+---
 # v0.1.0
 
 ## Features
@@ -8,4 +15,3 @@
 * chore: update Lacework provider version to v1 (Sourcegraph)([23c4950](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/23c4950d27b707cf6d5b19fe0e70f6bba441443a))
 * chore: update readme (Darren Murray)([059864a](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/059864a60f56a41f0899c73782a7f6b638794029))
 ---
-
