@@ -272,7 +272,7 @@ resource "google_project_iam_member" "agentless_orchestrate_service_account_user
 
 // Role for Snapshot Creation
 resource "google_project_iam_custom_role" "agentless_orchestrate_project" {
-  for_each = setunion([local.scanning_project_id], local.included_projects)
+  for_each = var.global && (var.integration_type == "PROJECT") ? setunion([local.scanning_project_id], local.included_projects) : []
 
   project = each.key
   role_id = replace("${var.prefix}-snapshot-${local.suffix}", "-", "_")
