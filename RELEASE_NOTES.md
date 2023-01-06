@@ -1,7 +1,7 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v0.1.2`.
+Another day, another release. These are the release notes for the version `v0.1.3`.
 
 ## Bug Fixes
-* fix: conditionally create the role for snapshot creation (#7) (Alan Nix)([20b23e3](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/20b23e392d95ae946cb2df133d28b5b99c31b173))
+* fix: inherit region from Google provider configuration (#9) (Alan Nix)([e076522](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/e0765222dd5eb6d4b4d74084bb286ac740a28790))
 ## Other Changes
-* ci: version bump to v0.1.2-dev (Lacework)([053f820](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/053f82040a12127c30ef3f20ca74e85f0f107c87))
+* ci: version bump to v0.1.3-dev (Lacework)([28094db](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/28094db5389e4c672717f1585c0e8cc89edffc9c))
