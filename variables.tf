@@ -165,12 +165,6 @@ variable "service_account_name" {
   description = "The name of the service account Lacework will use to access scan results."
 }
 
-variable "region" {
-  type        = string
-  default     = "us-central1"
-  description = "The region in which to create resources."
-}
-
 variable "global_module_reference" {
   type = object({
     agentless_orchestrate_service_account_email = string

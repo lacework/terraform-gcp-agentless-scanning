@@ -12,6 +12,8 @@ locals {
   suffix = length(var.global_module_reference.suffix) > 0 ? var.global_module_reference.suffix : (length(var.suffix) > 0 ? var.suffix : random_id.uniq.hex)
   prefix = length(var.global_module_reference.prefix) > 0 ? var.global_module_reference.prefix : var.prefix
 
+  region = data.google_client_config.default.region
+
   service_account_name     = var.global ? (length(var.service_account_name) > 0 ? var.service_account_name : "${var.prefix}-sa-${local.suffix}") : ""
   service_account_json_key = var.global ? jsondecode(base64decode(module.lacework_agentless_scan_svc_account[0].private_key)) : jsondecode("{}")
   service_account_permissions = var.global ? toset([
@@ -44,6 +46,8 @@ resource "random_id" "uniq" {
 }
 
 data "lacework_user_profile" "current" {}
+
+data "google_client_config" "default" {}
 
 data "google_project" "selected" {}
 
@@ -89,7 +93,7 @@ resource "google_secret_manager_secret" "agentless_orchestrate" {
   replication {
     user_managed {
       replicas {
-        location = var.region
+        location = local.region
       }
     }
   }
@@ -128,7 +132,7 @@ resource "google_storage_bucket" "lacework_bucket" {
   project       = local.scanning_project_id
   name          = "${var.prefix}-bucket-${local.suffix}"
   force_destroy = var.bucket_force_destroy
-  location      = var.region
+  location      = local.region
 
   uniform_bucket_level_access = var.bucket_enable_ubla
 
@@ -363,7 +367,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
   count = var.regional ? 1 : 0
 
   name         = "${var.prefix}-service-${local.suffix}"
-  location     = var.region
+  location     = local.region
   launch_stage = "BETA"
   project      = local.scanning_project_id
 
@@ -409,7 +413,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
         }
         env {
           name  = "SIDEKICK_REGION"
-          value = var.region
+          value = local.region
         }
         env {
           name  = "GCP_SCANNER_PROJECT_ID"
@@ -450,13 +454,13 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
   name        = "${var.prefix}-periodic-trigger-${local.suffix}"
   description = "Invoke Lacework Agentless Workload Scanning on a schedule."
   project     = local.scanning_project_id
-  region      = var.region
+  region      = local.region
   schedule    = "0 * * * *"
   time_zone   = "Etc/UTC"
 
   http_target {
     http_method = "POST"
-    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${local.scanning_project_id}/jobs/${var.prefix}-service-${local.suffix}:run"
+    uri         = "https://${local.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${local.scanning_project_id}/jobs/${var.prefix}-service-${local.suffix}:run"
 
     oauth_token {
       service_account_email = data.google_compute_default_service_account.default.email
