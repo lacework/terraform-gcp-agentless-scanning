@@ -421,7 +421,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
         }
         env {
           name  = "GCP_ORG_ID"
-          value = "organizations/${local.organization_id}"
+          value = local.organization_id
         }
         env {
           name  = "GCP_SCAN_SCOPE"
