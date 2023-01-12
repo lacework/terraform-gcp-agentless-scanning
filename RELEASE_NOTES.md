@@ -1,7 +1,7 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v0.1.3`.
+Another day, another release. These are the release notes for the version `v0.1.4`.
 
 ## Bug Fixes
-* fix: inherit region from Google provider configuration (#9) (Alan Nix)([e076522](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/e0765222dd5eb6d4b4d74084bb286ac740a28790))
+* fix: removed prefix from `GCP_ORG_ID` env var (#12) (Alan Nix)([199a419](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/199a419359c8920169c5477a7f82c688970024dd))
 ## Other Changes
-* ci: version bump to v0.1.3-dev (Lacework)([28094db](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/28094db5389e4c672717f1585c0e8cc89edffc9c))
+* ci: version bump to v0.1.4-dev (Lacework)([05da03d](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/05da03d9f9143479939e292a2a202c03ae0fb3e5))
