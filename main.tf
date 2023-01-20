@@ -431,6 +431,10 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
           name  = "GCP_SCAN_LIST"
           value = join(", ", var.project_filter_list)
         }
+        env {
+          name  = "GCP_CUSTOM_SUBNETWORK"
+          value = var.custom_vpc_subnet
+        }
 
       }
       service_account = local.agentless_orchestrate_service_account_email
@@ -438,7 +442,10 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
     }
   }
 
-  depends_on = [google_project_service.required_apis]
+  depends_on = [
+    google_project_service.required_apis,
+    data.google_compute_subnetwork.awls
+  ]
 }
 
 data "google_compute_default_service_account" "default" {
@@ -468,4 +475,18 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
   }
 
   depends_on = [google_project_service.required_apis]
+}
+
+data "google_compute_subnetwork" "awls" {
+  count = var.regional && length(var.custom_vpc_subnet) > 0 ? 1 : 0
+
+  name   = var.custom_vpc_subnet
+  region = local.region
+
+  lifecycle {
+    postcondition {
+      condition     = self.id != null
+      error_message = "The provided var.custom_vpc_subnet does not exist."
+    }
+  }
 }

@@ -165,6 +165,12 @@ variable "service_account_name" {
   description = "The name of the service account Lacework will use to access scan results."
 }
 
+variable "custom_vpc_subnet" {
+  type        = string
+  default     = ""
+  description = "The name of the custom Google Cloud VPC subnet to use for scanning compute resources"
+}
+
 variable "global_module_reference" {
   type = object({
     agentless_orchestrate_service_account_email = string

@@ -9,6 +9,7 @@ set -eou pipefail
 readonly project_name=terraform-gcp-agentless-scanning
 
 TEST_CASES=(
+  examples/custom-vpc-network
   examples/org-level-multi-region
   examples/org-level-single-region
   examples/project-level-multi-region
