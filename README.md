@@ -59,7 +59,6 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | [random_id.uniq](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id)                                                                                      | resource    |
 | [google_client_config.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config)                                                          | data source |
 | [google_compute_default_service_account.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_default_service_account)                      | data source |
-| [google_compute_subnetwork.awls](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_subnetwork)                                                   | data source |
 | [google_project.selected](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project)                                                                     | data source |
 | [lacework_user_profile.current](https://registry.terraform.io/providers/lacework/lacework/latest/docs/data-sources/user_profile)                                                         | data source |
 

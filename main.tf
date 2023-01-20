@@ -443,8 +443,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
   }
 
   depends_on = [
-    google_project_service.required_apis,
-    data.google_compute_subnetwork.awls
+    google_project_service.required_apis
   ]
 }
 
@@ -475,18 +474,4 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
   }
 
   depends_on = [google_project_service.required_apis]
-}
-
-data "google_compute_subnetwork" "awls" {
-  count = var.regional && length(var.custom_vpc_subnet) > 0 ? 1 : 0
-
-  name   = var.custom_vpc_subnet
-  region = local.region
-
-  lifecycle {
-    postcondition {
-      condition     = self.id != null
-      error_message = "The provided var.custom_vpc_subnet does not exist."
-    }
-  }
 }
