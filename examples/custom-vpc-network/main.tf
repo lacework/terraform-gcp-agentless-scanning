@@ -72,7 +72,7 @@ module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
   global   = true
   regional = true
 
-  custom_vpc_subnet = google_compute_subnetwork.awls_subnet_1.name
+  custom_vpc_subnet = google_compute_subnetwork.awls_subnet_1.id
 }
 
 module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
@@ -87,5 +87,5 @@ module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
   regional                = true
   global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_use1
 
-  custom_vpc_subnet = google_compute_subnetwork.awls_subnet_2.name
+  custom_vpc_subnet = google_compute_subnetwork.awls_subnet_2.id
 }
