@@ -43,7 +43,7 @@ locals {
     ]
   }) : ({})
 
-  region_subnetwork = length(var.custom_vpc_subnet) > 0 ? var.custom_vpc_subnet : "projects/${local.scanning_project_id}/regions/${local.region}/subnetworks/${local.network_name}"
+  region_subnetwork = var.use_existing_subnet ? var.subnet_id : "projects/${local.scanning_project_id}/regions/${local.region}/subnetworks/${local.network_name}"
 }
 
 resource "random_id" "uniq" {
@@ -89,14 +89,14 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
 }
 
 resource "google_compute_network" "agentless" {
-  count = var.global && length(var.custom_vpc_subnet) == 0 ? 1 : 0
+  count = var.global && !var.use_existing_subnet ? 1 : 0
 
   name                    = local.network_name
   auto_create_subnetworks = true
 }
 
 resource "google_compute_firewall" "agentless" {
-  count = var.global && length(var.custom_vpc_subnet) == 0 ? 1 : 0
+  count = var.global && !var.use_existing_subnet ? 1 : 0
 
   name        = "awls-allow-https-egress"
   network     = google_compute_network.agentless[0].name

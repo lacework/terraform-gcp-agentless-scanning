@@ -15,7 +15,9 @@ In this example we add Terraform modules to one Google Cloud region.
 ```hcl
 provider "lacework" {}
 
-provider "google" {}
+provider "google" {
+  region = "us-central1"
+}
 
 module "lacework_gcp_agentless_scanning_project_single_region" {
   source  = "lacework/agentless-scanning/gcp"

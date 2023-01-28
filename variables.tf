@@ -169,13 +169,18 @@ variable "network_name" {
   type        = string
   default     = "lacework-awls"
   description = "The name of the network to create for agentless workload scanning resources."
-
 }
 
-variable "custom_vpc_subnet" {
+variable "use_existing_subnet" {
+  type        = bool
+  default     = false
+  description = "Set this to `true` to use an existing subnet for scannin compute resources."
+}
+
+variable "subnet_id" {
   type        = string
   default     = ""
-  description = "The ID of the custom Google Cloud VPC subnet to use for scanning compute resources."
+  description = "The ID of the custom Google Cloud VPC subnet to use for scanning compute resources.  Must also set `use_existing_subnet` to `true`."
 }
 
 variable "global_module_reference" {

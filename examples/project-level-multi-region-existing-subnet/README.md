@@ -25,13 +25,6 @@ provider "google" {
   region = "us-central1"
 }
 
-locals {
-  project_filter_list = [
-    "monitored-project-1",
-    "monitored-project-2"
-  ]
-}
-
 resource "google_compute_network" "awls" {
   provider = google.use1
 
@@ -77,33 +70,37 @@ resource "google_compute_firewall" "rules" {
 
 module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
   source  = "lacework/agentless-scanning/gcp"
-  version = "~> 0.1"
+  version = "~> 0.3"
 
   providers = {
     google = google.use1
   }
 
-  project_filter_list = local.project_filter_list
+  project_filter_list = [
+    "monitored-project-1",
+    "monitored-project-2"
+  ]
 
   global                    = true
   regional                  = true
 
-  custom_vpc_subnet = google_compute_subnetwork.awls_subnet_1.id
+  use_existing_subnet = true
+  subnet_id           = google_compute_subnetwork.awls_subnet_1.id
 }
 
 module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
   source  = "lacework/agentless-scanning/gcp"
-  version = "~> 0.1"
+  version = "~> 0.3"
 
   providers = {
     google = google.usc1
   }
 
-  project_filter_list = local.project_filter_list
+  regional = true
 
-  regional                = true
+  use_existing_subnet = true
+  subnet_id           = google_compute_subnetwork.awls_subnet_2.id
+
   global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_use1
-
-  custom_vpc_subnet = google_compute_subnetwork.awls_subnet_2.id
 }
 ```
