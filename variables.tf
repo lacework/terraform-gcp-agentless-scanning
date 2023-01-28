@@ -174,7 +174,7 @@ variable "network_name" {
 variable "use_existing_subnet" {
   type        = bool
   default     = false
-  description = "Set this to `true` to use an existing subnet for scannin compute resources."
+  description = "Set this to `true` to use an existing subnet for scanning compute resources."
 }
 
 variable "subnet_id" {
