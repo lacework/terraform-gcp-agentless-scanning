@@ -9,6 +9,9 @@ locals {
   lacework_domain  = length(var.global_module_reference.lacework_domain) > 0 ? var.global_module_reference.lacework_domain : var.lacework_domain
   lacework_account = length(var.global_module_reference.lacework_account) > 0 ? var.global_module_reference.lacework_account : (length(var.lacework_account) > 0 ? var.lacework_account : trimsuffix(data.lacework_user_profile.current.url, ".${local.lacework_domain}"))
 
+  network_name        = length(var.global_module_reference.network_name) > 0 ? var.global_module_reference.network_name : var.network_name
+  project_filter_list = length(var.global_module_reference.project_filter_list) > 0 ? var.global_module_reference.project_filter_list : var.project_filter_list
+
   suffix = length(var.global_module_reference.suffix) > 0 ? var.global_module_reference.suffix : (length(var.suffix) > 0 ? var.suffix : random_id.uniq.hex)
   prefix = length(var.global_module_reference.prefix) > 0 ? var.global_module_reference.prefix : var.prefix
 
@@ -39,6 +42,8 @@ locals {
       "projectViewer:${local.scanning_project_id}"
     ]
   }) : ({})
+
+  region_subnetwork = length(var.custom_vpc_subnet) > 0 ? var.custom_vpc_subnet : "projects/${local.scanning_project_id}/regions/${local.region}/subnetworks/${local.network_name}"
 }
 
 resource "random_id" "uniq" {
@@ -80,6 +85,31 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
     private_key_id = local.service_account_json_key.private_key_id
     client_email   = local.service_account_json_key.client_email
     private_key    = local.service_account_json_key.private_key
+  }
+}
+
+resource "google_compute_network" "agentless" {
+  count = var.global && length(var.custom_vpc_subnet) == 0 ? 1 : 0
+
+  name                    = local.network_name
+  auto_create_subnetworks = true
+}
+
+resource "google_compute_firewall" "agentless" {
+  count = var.global && length(var.custom_vpc_subnet) == 0 ? 1 : 0
+
+  name        = "awls-allow-https-egress"
+  network     = google_compute_network.agentless[0].name
+  description = "Firewall policy for Lacework Agentless Workload Scanning"
+  direction   = "EGRESS"
+
+  destination_ranges = [
+    "0.0.0.0/0"
+  ]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
   }
 }
 
@@ -429,11 +459,11 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
         }
         env {
           name  = "GCP_SCAN_LIST"
-          value = join(", ", var.project_filter_list)
+          value = join(", ", local.project_filter_list)
         }
         env {
           name  = "GCP_CUSTOM_SUBNETWORK"
-          value = var.custom_vpc_subnet
+          value = local.region_subnetwork
         }
 
       }

@@ -36,7 +36,7 @@ variable "scanning_project_id" {
 }
 
 variable "project_filter_list" {
-  type        = list(any)
+  type        = list(string)
   default     = []
   description = "A list of projects to include/exclude for integration."
 }
@@ -165,10 +165,17 @@ variable "service_account_name" {
   description = "The name of the service account Lacework will use to access scan results."
 }
 
+variable "network_name" {
+  type        = string
+  default     = "lacework-awls"
+  description = "The name of the network to create for agentless workload scanning resources."
+
+}
+
 variable "custom_vpc_subnet" {
   type        = string
   default     = ""
-  description = "The name of the custom Google Cloud VPC subnet to use for scanning compute resources"
+  description = "The ID of the custom Google Cloud VPC subnet to use for scanning compute resources."
 }
 
 variable "global_module_reference" {
@@ -178,6 +185,8 @@ variable "global_module_reference" {
     agentless_scan_secret_id                    = string
     lacework_account                            = string
     lacework_domain                             = string
+    network_name                                = string
+    project_filter_list                         = list(string)
     prefix                                      = string
     suffix                                      = string
   })
@@ -187,6 +196,8 @@ variable "global_module_reference" {
     agentless_scan_secret_id                    = ""
     lacework_account                            = ""
     lacework_domain                             = ""
+    network_name                                = ""
+    project_filter_list                         = []
     prefix                                      = ""
     suffix                                      = ""
   }

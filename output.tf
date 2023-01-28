@@ -28,9 +28,19 @@ output "lacework_domain" {
   description = "Lacework Domain Name for Integration."
 }
 
+output "network_name" {
+  value       = var.network_name
+  description = "The network name for Agentless Workload Scanning resources."
+}
+
 output "prefix" {
   value       = var.prefix
   description = "Prefix used to add uniqueness to resource names."
+}
+
+output "project_filter_list" {
+  value       = var.project_filter_list
+  description = "A list of projects to include/exclude for integration."
 }
 
 output "service_account_name" {
