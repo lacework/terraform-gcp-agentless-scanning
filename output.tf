@@ -29,7 +29,7 @@ output "lacework_domain" {
 }
 
 output "network_name" {
-  value       = var.network_name
+  value       = local.network_name
   description = "The network name for Agentless Workload Scanning resources."
 }
 

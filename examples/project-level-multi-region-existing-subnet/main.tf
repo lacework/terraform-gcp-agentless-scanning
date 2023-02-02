@@ -53,6 +53,50 @@ resource "google_compute_firewall" "rules" {
   }
 }
 
+resource "google_compute_router" "router_1" {
+  provider = google.usc1
+
+  name    = "lacework-awls-router"
+  network = google_compute_network.awls.id
+}
+
+resource "google_compute_router" "router_2" {
+  provider = google.use1
+
+  name    = "lacework-awls-router"
+  network = google_compute_network.awls.id
+}
+
+resource "google_compute_router_nat" "nat_1" {
+  provider = google.usc1
+
+  name                               = "lacework-awls-nat"
+  router                             = google_compute_router.router_1.name
+  region                             = google_compute_router.router_1.region
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
+  }
+}
+
+resource "google_compute_router_nat" "nat_2" {
+  provider = google.use1
+
+  name                               = "lacework-awls-nat"
+  router                             = google_compute_router.router_2.name
+  region                             = google_compute_router.router_2.region
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
+  }
+}
+
 module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
   source = "../.."
 

@@ -165,12 +165,6 @@ variable "service_account_name" {
   description = "The name of the service account Lacework will use to access scan results."
 }
 
-variable "network_name" {
-  type        = string
-  default     = "lacework-awls"
-  description = "The name of the network to create for agentless workload scanning resources."
-}
-
 variable "use_existing_subnet" {
   type        = bool
   default     = false

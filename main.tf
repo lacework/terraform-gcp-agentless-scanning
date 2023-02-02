@@ -9,7 +9,7 @@ locals {
   lacework_domain  = length(var.global_module_reference.lacework_domain) > 0 ? var.global_module_reference.lacework_domain : var.lacework_domain
   lacework_account = length(var.global_module_reference.lacework_account) > 0 ? var.global_module_reference.lacework_account : (length(var.lacework_account) > 0 ? var.lacework_account : trimsuffix(data.lacework_user_profile.current.url, ".${local.lacework_domain}"))
 
-  network_name        = length(var.global_module_reference.network_name) > 0 ? var.global_module_reference.network_name : var.network_name
+  network_name        = length(var.global_module_reference.network_name) > 0 ? var.global_module_reference.network_name : "${var.prefix}-network-${local.suffix}"
   project_filter_list = length(var.global_module_reference.project_filter_list) > 0 ? var.global_module_reference.project_filter_list : var.project_filter_list
 
   suffix = length(var.global_module_reference.suffix) > 0 ? var.global_module_reference.suffix : (length(var.suffix) > 0 ? var.suffix : random_id.uniq.hex)
@@ -43,7 +43,8 @@ locals {
     ]
   }) : ({})
 
-  region_subnetwork = var.use_existing_subnet ? var.subnet_id : "projects/${local.scanning_project_id}/regions/${local.region}/subnetworks/${local.network_name}"
+  global_network_id    = var.global ? (!var.use_existing_subnet ? google_compute_network.agentless[0].id : "") : "projects/${local.scanning_project_id}/global/networks/${local.network_name}"
+  region_subnetwork_id = var.use_existing_subnet ? var.subnet_id : "projects/${local.scanning_project_id}/regions/${local.region}/subnetworks/${local.network_name}"
 }
 
 resource "random_id" "uniq" {
@@ -110,6 +111,29 @@ resource "google_compute_firewall" "agentless" {
   allow {
     protocol = "tcp"
     ports    = ["443"]
+  }
+}
+
+resource "google_compute_router" "agentless" {
+  count = var.regional && !var.use_existing_subnet ? 1 : 0
+
+  name    = "${var.prefix}-router-${local.suffix}"
+  region  = local.region
+  network = local.global_network_id
+}
+
+resource "google_compute_router_nat" "agentless" {
+  count = var.regional && !var.use_existing_subnet ? 1 : 0
+
+  name                               = "${var.prefix}-nat-${local.suffix}"
+  router                             = google_compute_router.agentless[0].name
+  region                             = google_compute_router.agentless[0].region
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
   }
 }
 
@@ -463,7 +487,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
         }
         env {
           name  = "GCP_CUSTOM_SUBNETWORK"
-          value = local.region_subnetwork
+          value = local.region_subnetwork_id
         }
 
       }
