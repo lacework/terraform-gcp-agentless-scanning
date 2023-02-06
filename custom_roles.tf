@@ -9,7 +9,6 @@ resource "google_project_iam_custom_role" "agentless_orchestrate_monitored_proje
   role_id = replace("${var.prefix}-snapshot-${local.suffix}", "-", "_")
   title   = "Lacework Agentless Workload Scanning Role for monitored project (Create Snapshots)"
   permissions = [
-    "compute.disks.createSnapshot",
     "compute.disks.get",
     "compute.disks.useReadOnly",
     "compute.instances.get",
@@ -32,7 +31,6 @@ resource "google_organization_iam_custom_role" "agentless_orchestrate" {
   title   = "Lacework Agentless Workload Scanning Role for monitored organization (Organization Snapshots)"
   permissions = [
     "iam.roles.get",
-    "compute.disks.createSnapshot",
     "compute.disks.get",
     "compute.instances.get",
     "compute.instances.list",
