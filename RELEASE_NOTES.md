@@ -1,7 +1,8 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v0.2.0`.
+Another day, another release. These are the release notes for the version `v0.2.1`.
 
-## Features
-* feat: allow for custom VPC networking (#14) (Alan Nix)([8bfcdf8](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/8bfcdf832ea633dfc6b3e2a4f83bab38cf23a17e))
+## Bug Fixes
+* fix: Update tf scan frequency validation (#18) (Whitney Smith)([9277f2d](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/9277f2d1cb28015083476c1e3274f43ffc5dfc02))
 ## Other Changes
-* ci: version bump to v0.1.5-dev (Lacework)([5ecb7f7](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/5ecb7f7d34954ba711eba76d49b973e4a5de8ae5))
+* refactor: move custom role creation to a new file (#19) (Ammar Ekbote)([d52dfca](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/d52dfca11b9064b5164448c4a4082e508071ac5f))
+* ci: version bump to v0.2.1-dev (Lacework)([433ea57](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/433ea57ccef445d322f7df0d3ce6b8490de71608))
