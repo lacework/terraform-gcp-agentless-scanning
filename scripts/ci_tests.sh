@@ -14,6 +14,7 @@ TEST_CASES=(
   examples/org-level-single-region
   examples/project-level-multi-region
   examples/project-level-single-region
+  examples/project-level-single-region-existing-service-account
 )
 
 log() {

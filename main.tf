@@ -14,8 +14,16 @@ locals {
 
   region = data.google_client_config.default.region
 
-  lacework_integration_service_account_name     = var.global ? (length(var.lacework_integration_service_account_name) > 0 ? var.lacework_integration_service_account_name : "${var.prefix}-sa-${local.suffix}") : ""
-  lacework_integration_service_account_json_key = var.global ? jsondecode(base64decode(module.lacework_agentless_scan_svc_account[0].private_key)) : jsondecode("{}")
+  lacework_integration_service_account_name = var.global ? var.use_existing_service_account ? (
+    var.service_account_name
+    ) : (
+    length(var.lacework_integration_service_account_name) > 0 ? var.lacework_integration_service_account_name : "${var.prefix}-sa-${local.suffix}"
+  ) : ""
+  lacework_integration_service_account_json_key = var.global ? jsondecode(var.use_existing_service_account ? (
+    base64decode(var.service_account_private_key)
+    ) : (
+    base64decode(module.lacework_agentless_scan_svc_account[0].private_key)
+  )) : jsondecode("{}")
   lacework_integration_service_account_permissions = var.global ? toset([
     "roles/storage.objectViewer",
     "roles/run.invoker",
@@ -171,7 +179,7 @@ module "lacework_agentless_scan_svc_account" {
 
   source               = "lacework/service-account/gcp"
   version              = "~> 1.0"
-  create               = true
+  create               = var.use_existing_service_account ? false : true
   service_account_name = local.lacework_integration_service_account_name
   project_id           = local.scanning_project_id
 }

@@ -97,11 +97,11 @@ variable "scan_frequency_hours" {
   type        = number
   description = "How often in hours the scan will run in hours. Defaults to `24`."
   default     = 24
-  
+
   validation {
-    condition = ( 
-      var.scan_frequency_hours == 24 || 
-      var.scan_frequency_hours == 12 || 
+    condition = (
+      var.scan_frequency_hours == 24 ||
+      var.scan_frequency_hours == 12 ||
       var.scan_frequency_hours == 6
     )
     error_message = "The scan frequency must be 6, 12, or 24 hours."
@@ -200,4 +200,22 @@ variable "global_module_reference" {
     suffix                                      = ""
   }
   description = "A reference to the global lacework_gcp_agentless_scanning module for this account."
+}
+
+variable "use_existing_service_account" {
+  type        = bool
+  default     = false
+  description = "Set this to true to use an existing Service Account"
+}
+
+variable "service_account_name" {
+  type        = string
+  default     = ""
+  description = "The Service Account name (required when use_existing_service_account is set to true)"
+}
+
+variable "service_account_private_key" {
+  type        = string
+  default     = ""
+  description = "The private key in JSON format, base64 encoded (required when use_existing_service_account is set to true)"
 }
