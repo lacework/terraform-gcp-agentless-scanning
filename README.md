@@ -37,6 +37,8 @@ A Terraform Module to configure the Lacework Agentless Scanner within Google Clo
 | [google_cloud_scheduler_job.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_scheduler_job) | resource |
 | [google_compute_firewall.agentless](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
 | [google_compute_network.agentless](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network) | resource |
+| [google_compute_router.agentless](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router) | resource |
+| [google_compute_router_nat.agentless](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router_nat) | resource |
 | [google_organization_iam_custom_role.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/organization_iam_custom_role) | resource |
 | [google_organization_iam_member.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/organization_iam_member) | resource |
 | [google_project_iam_custom_role.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_custom_role) | resource |
@@ -82,7 +84,6 @@ A Terraform Module to configure the Lacework Agentless Scanner within Google Clo
 | <a name="input_lacework_account"></a> [lacework\_account](#input\_lacework\_account) | The name of the Lacework account with which to integrate. | `string` | `""` | no |
 | <a name="input_lacework_domain"></a> [lacework\_domain](#input\_lacework\_domain) | The domain of the Lacework account with with to integrate. | `string` | `"lacework.net"` | no |
 | <a name="input_lacework_integration_name"></a> [lacework\_integration\_name](#input\_lacework\_integration\_name) | The name of the Lacework cloud account integration. | `string` | `"google-cloud-agentless-scanning"` | no |
-| <a name="input_network_name"></a> [network\_name](#input\_network\_name) | The name of the network to create for agentless workload scanning resources. | `string` | `"lacework-awls"` | no |
 | <a name="input_organization_id"></a> [organization\_id](#input\_organization\_id) | The organization ID, required if integration\_type is set to ORGANIZATION | `string` | `""` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | A string to be prefixed to the name of all new resources. | `string` | `"lacework-awls"` | no |
 | <a name="input_project_filter_list"></a> [project\_filter\_list](#input\_project\_filter\_list) | A list of projects to include/exclude for integration. | `list(string)` | `[]` | no |
@@ -96,6 +97,7 @@ A Terraform Module to configure the Lacework Agentless Scanner within Google Clo
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | The ID of the custom Google Cloud VPC subnet to use for scanning compute resources.  Must also set `use_existing_subnet` to `true`. | `string` | `""` | no |
 | <a name="input_suffix"></a> [suffix](#input\_suffix) | A string to be appended to the end of the name of all new resources. | `string` | `""` | no |
 | <a name="input_use_existing_subnet"></a> [use\_existing\_subnet](#input\_use\_existing\_subnet) | Set this to `true` to use an existing subnet for scanning compute resources. | `bool` | `false` | no |
+| <a name="input_use_public_ip_addresses"></a> [use\_public\_ip\_addresses](#input\_use\_public\_ip\_addresses) | Set this to `false` to have AWLS provision compute instances without public IP addresses.  Doing so requires deployment of Cloud NAT instances which will incur additional cost. (https://cloud.google.com/nat/pricing) | `bool` | `true` | no |
 
 ## Outputs
 

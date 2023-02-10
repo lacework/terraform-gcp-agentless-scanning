@@ -177,6 +177,12 @@ variable "subnet_id" {
   description = "The ID of the custom Google Cloud VPC subnet to use for scanning compute resources.  Must also set `use_existing_subnet` to `true`."
 }
 
+variable "use_public_ip_addresses" {
+  type        = bool
+  default     = true
+  description = "Set this to `false` to have AWLS provision compute instances without public IP addresses.  Doing so requires deployment of Cloud NAT instances which will incur additional cost. (https://cloud.google.com/nat/pricing)"
+}
+
 variable "global_module_reference" {
   type = object({
     agentless_orchestrate_service_account_email = string

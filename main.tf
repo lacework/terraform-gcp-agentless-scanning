@@ -115,7 +115,7 @@ resource "google_compute_firewall" "agentless" {
 }
 
 resource "google_compute_router" "agentless" {
-  count = var.regional && !var.use_existing_subnet ? 1 : 0
+  count = var.regional && !var.use_public_ip_addresses && !var.use_existing_subnet ? 1 : 0
 
   name    = "${var.prefix}-router-${local.suffix}"
   region  = local.region
@@ -123,7 +123,7 @@ resource "google_compute_router" "agentless" {
 }
 
 resource "google_compute_router_nat" "agentless" {
-  count = var.regional && !var.use_existing_subnet ? 1 : 0
+  count = var.regional && !var.use_public_ip_addresses && !var.use_existing_subnet ? 1 : 0
 
   name                               = "${var.prefix}-nat-${local.suffix}"
   router                             = google_compute_router.agentless[0].name
@@ -488,6 +488,10 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
         env {
           name  = "GCP_CUSTOM_SUBNETWORK"
           value = local.region_subnetwork_id
+        }
+        env {
+          name  = "USE_PUBLIC_IPS"
+          value = var.use_public_ip_addresses
         }
 
       }
