@@ -1,6 +1,6 @@
 locals {
-  scanning_project_id = length(var.scanning_project_id) > 0 ? var.scanning_project_id : data.google_project.selected.project_id
-  organization_id     = length(var.organization_id) > 0 ? var.organization_id : (data.google_project.selected.org_id != null ? data.google_project.selected.org_id : "")
+  scanning_project_id = length(var.scanning_project_id) > 0 ? var.scanning_project_id : data.google_project.selected[0].project_id
+  organization_id     = length(var.organization_id) > 0 ? var.organization_id : (data.google_project.selected[0].org_id != null ? data.google_project.selected[0].org_id : "")
 
   agentless_orchestrate_service_account_email = var.global ? google_service_account.agentless_orchestrate[0].email : (length(var.global_module_reference.agentless_orchestrate_service_account_email) > 0 ? var.global_module_reference.agentless_orchestrate_service_account_email : var.agentless_orchestrate_service_account_email)
   agentless_scan_service_account_email        = var.global ? google_service_account.agentless_scan[0].email : (length(var.global_module_reference.agentless_scan_service_account_email) > 0 ? var.global_module_reference.agentless_scan_service_account_email : var.agentless_scan_service_account_email)
@@ -49,7 +49,9 @@ data "lacework_user_profile" "current" {}
 
 data "google_client_config" "default" {}
 
-data "google_project" "selected" {}
+data "google_project" "selected" {
+  count = length(var.scanning_project_id) > 0 ? (length(var.organization_id) > 0 ? 0 : 1) : 1
+}
 
 resource "google_project_service" "required_apis" {
   for_each = var.required_apis
