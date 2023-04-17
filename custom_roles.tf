@@ -94,6 +94,7 @@ resource "google_project_iam_custom_role" "agentless_scan" {
     "compute.disks.create",
     "compute.disks.get",
     "compute.instances.create",
+    "compute.instances.delete",
     "compute.snapshots.delete",
     "compute.snapshots.list",
     "compute.snapshots.setLabels",
