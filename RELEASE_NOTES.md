@@ -1,7 +1,8 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v0.2.2`.
+Another day, another release. These are the release notes for the version `v0.3.0`.
 
-## Bug Fixes
-* fix: avoid asking for project_id when is not needed (#24) (Salim Afiune)([e1a80ac](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/e1a80ac227124da41017a0486052201962ce851a))
+## Features
+* feat: Add multi volume variable (#28) (#34) (Whitney Smith)([8102c70](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/8102c7068b2c1942663188ee8b503d5097912168))
 ## Other Changes
-* ci: version bump to v0.2.2-dev (Lacework)([9fb223c](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/9fb223cf0260ff9176b5a53d5ce71c20c00ea887))
+* chore: Revert "Add multi volume variable (#28)" (#33) (Whitney Smith)([8048407](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/80484073f2eb6dc062e9e3e6733c234ba4070904))
+* ci: version bump to v0.2.3-dev (Lacework)([4dab127](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/4dab127028a53a002ceaa3ad0e785931fae4d64b))
