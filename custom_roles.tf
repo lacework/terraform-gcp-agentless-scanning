@@ -13,6 +13,7 @@ resource "google_project_iam_custom_role" "agentless_orchestrate_monitored_proje
     "compute.disks.useReadOnly",
     "compute.instances.get",
     "compute.instances.list",
+    "compute.machineTypes.get",
     "compute.zones.list",
   ]
 }
@@ -34,6 +35,7 @@ resource "google_organization_iam_custom_role" "agentless_orchestrate" {
     "compute.disks.useReadOnly",
     "compute.instances.get",
     "compute.instances.list",
+    "compute.machineTypes.get",
     "compute.projects.get",
     "compute.zones.list",
     "resourcemanager.folders.list",
