@@ -283,7 +283,6 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
 
   name         = "${var.prefix}-service-${local.suffix}"
   location     = local.region
-  launch_stage = "BETA"
   project      = local.scanning_project_id
 
   template {
@@ -384,7 +383,7 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
     uri         = "https://${local.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${local.scanning_project_id}/jobs/${var.prefix}-service-${local.suffix}:run"
 
     oauth_token {
-      service_account_email = data.google_compute_default_service_account.default.email
+      service_account_email = local.agentless_orchestrate_service_account_email
     }
   }
 
