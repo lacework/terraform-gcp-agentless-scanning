@@ -214,7 +214,7 @@ resource "google_organization_iam_member" "agentless_orchestrate" {
 
 // Orchestrate Service Account <-> Role Binding for Custom Role created in each monitored project
 resource "google_project_iam_member" "agentless_orchestrate_monitored_project" {
-  for_each = google_project_iam_custom_role.agentless_orchestrate_monitored_project
+  for_each = var.project_role_orchestrate_monitored_project
 
   project = split("/", each.value.id)[1]
   role    = each.value.id
@@ -226,7 +226,7 @@ resource "google_project_iam_member" "agentless_orchestrate" {
   count = var.global ? 1 : 0
 
   project = local.scanning_project_id
-  role    = google_project_iam_custom_role.agentless_orchestrate[0].id
+  role    = var.project_role_agentless_orchestrate.id
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
@@ -267,7 +267,7 @@ resource "google_project_iam_member" "agentless_scan" {
   count = var.global ? 1 : 0
 
   project = local.scanning_project_id
-  role    = google_project_iam_custom_role.agentless_scan[0].id
+  role    = var.project_role_agentless_scan.id
   member  = "serviceAccount:${local.agentless_scan_service_account_email}"
 }
 
