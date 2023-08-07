@@ -66,6 +66,7 @@ resource "google_project_iam_custom_role" "agentless_orchestrate" {
     "compute.instances.list",
     "compute.instances.setMetadata",
     "compute.instances.setServiceAccount",
+    "compute.machineTypes.get",
     "compute.snapshots.create",
     "compute.snapshots.delete",
     "compute.snapshots.list",
