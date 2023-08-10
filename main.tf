@@ -14,17 +14,17 @@ locals {
 
   region = data.google_client_config.default.region
 
-  lacework_integration_service_account_name     = var.global ? (length(var.lacework_integration_service_account_name) > 0 ? var.lacework_integration_service_account_name : "${var.prefix}-sa-${local.suffix}") : ""
-  lacework_integration_service_account_json_key = var.global ? jsondecode(base64decode(module.lacework_agentless_scan_svc_account[0].private_key)) : jsondecode("{}")
+  lacework_integration_service_account_name        = var.global ? (length(var.lacework_integration_service_account_name) > 0 ? var.lacework_integration_service_account_name : "${var.prefix}-sa-${local.suffix}") : ""
+  lacework_integration_service_account_json_key    = var.global ? jsondecode(base64decode(module.lacework_agentless_scan_svc_account[0].private_key)) : jsondecode("{}")
   lacework_integration_service_account_permissions = var.global ? toset([
     "roles/storage.objectViewer",
     "roles/run.invoker",
   ]) : []
 
   included_projects = var.global ? toset([for project in var.project_filter_list : project if !(substr(project, 0, 1) == "-")]) : []
-  excluded_projects = var.global ? toset([for project in var.project_filter_list : project if substr(project, 0, 1) == "-"]) : []
+  excluded_projects = var.global ? toset([for project in var.project_filter_list : project if substr(project, 0, 1) == "-" ]) : []
 
-  bucket_name = "${var.prefix}-bucket-${local.suffix}"
+  bucket_name  = "${var.prefix}-bucket-${local.suffix}"
   bucket_roles = var.global ? ({
     "roles/storage.admin" = [
       "projectEditor:${local.scanning_project_id}",
@@ -191,7 +191,7 @@ resource "google_project_iam_member" "lacework_svc_account" {
 
 //----------------------------------------------------------------------------------------------
 
-// Orchestrate Service Account for Enumeration and Clone creation
+#// Orchestrate Service Account for Enumeration and Clone creation
 resource "google_service_account" "agentless_orchestrate" {
   count = var.global ? 1 : 0
 
@@ -208,16 +208,17 @@ resource "google_organization_iam_member" "agentless_orchestrate" {
   count = var.global && (var.integration_type == "ORGANIZATION") ? 1 : 0
 
   org_id = var.organization_id
-  role   = google_organization_iam_custom_role.agentless_orchestrate[0].id
+  role   = var.custom_roles_creation_enabled ? google_organization_iam_custom_role.agentless_orchestrate[0].id : var.agentless_orchestrate_custom_role
   member = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
+
 
 // Orchestrate Service Account <-> Role Binding for Custom Role created in each monitored project
 resource "google_project_iam_member" "agentless_orchestrate_monitored_project" {
   for_each = google_project_iam_custom_role.agentless_orchestrate_monitored_project
 
   project = split("/", each.value.id)[1]
-  role    = each.value.id
+  role    = var.custom_roles_creation_enabled ? each.value.id : var.agentless_orchestrate_custom_role
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
@@ -226,11 +227,11 @@ resource "google_project_iam_member" "agentless_orchestrate" {
   count = var.global ? 1 : 0
 
   project = local.scanning_project_id
-  role    = google_project_iam_custom_role.agentless_orchestrate[0].id
+  role    = var.custom_roles_creation_enabled ? google_project_iam_custom_role.agentless_orchestrate[0].id : var.agentless_orchestrate_custom_role
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
-// Orchestrate Service Account <-> Role Binding for Service Account usage in Scanner Project
+#// Orchestrate Service Account <-> Role Binding for Service Account usage in Scanner Project
 resource "google_project_iam_member" "agentless_orchestrate_service_account_user" {
   count = var.global ? 1 : 0
 
@@ -239,7 +240,7 @@ resource "google_project_iam_member" "agentless_orchestrate_service_account_user
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
-// Orchestrate Service Account <-> Role Binding for Cloud Run invocation in Scanner Project
+#// Orchestrate Service Account <-> Role Binding for Cloud Run invocation in Scanner Project
 resource "google_project_iam_member" "agentless_orchestrate_invoker" {
   count = var.global ? 1 : 0
 
@@ -267,7 +268,7 @@ resource "google_project_iam_member" "agentless_scan" {
   count = var.global ? 1 : 0
 
   project = local.scanning_project_id
-  role    = google_project_iam_custom_role.agentless_scan[0].id
+  role    = var.custom_roles_creation_enabled ? google_project_iam_custom_role.agentless_scan[0].id : var.agentless_scan_custom_role
   member  = "serviceAccount:${local.agentless_scan_service_account_email}"
 }
 
@@ -281,9 +282,9 @@ resource "google_project_iam_member" "agentless_scan" {
 resource "google_cloud_run_v2_job" "agentless_orchestrate" {
   count = var.regional ? 1 : 0
 
-  name     = "${var.prefix}-service-${local.suffix}"
-  location = local.region
-  project  = local.scanning_project_id
+  name         = "${var.prefix}-service-${local.suffix}"
+  location     = local.region
+  project      = local.scanning_project_id
 
   template {
     template {
