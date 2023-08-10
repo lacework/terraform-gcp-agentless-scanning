@@ -1,5 +1,5 @@
 variable "required_apis" {
-  type = map(any)
+  type    = map(any)
   default = {
     cloudscheduler = "cloudscheduler.googleapis.com"
     compute        = "compute.googleapis.com"
@@ -112,9 +112,9 @@ variable "scan_frequency_hours" {
 
   validation {
     condition = (
-      var.scan_frequency_hours == 24 ||
-      var.scan_frequency_hours == 12 ||
-      var.scan_frequency_hours == 6
+    var.scan_frequency_hours == 24 ||
+    var.scan_frequency_hours == 12 ||
+    var.scan_frequency_hours == 6
     )
     error_message = "The scan frequency must be 6, 12, or 24 hours."
   }
@@ -136,6 +136,24 @@ variable "global" {
   type        = bool
   default     = false
   description = "Whether or not to create global resources. Defaults to `false`."
+}
+
+variable "custom_roles_creation_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether or not to create custom roles. Defaults to `true`."
+}
+
+variable "agentless_orchestrate_custom_role" {
+  type        = string
+  default     = ""
+  description = "Custom role to create & delete resources in scanner project."
+}
+
+variable "agentless_scan_custom_role" {
+  type        = string
+  default     = ""
+  description = "Custom role for scanner instances to interact with resources in Scanner project."
 }
 
 variable "regional" {
