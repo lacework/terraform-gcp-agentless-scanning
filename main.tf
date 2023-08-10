@@ -71,13 +71,13 @@ resource "google_project_service" "required_apis" {
 resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" {
   count = var.global ? 1 : 0
 
-  name                = var.lacework_integration_name
-  resource_level      = var.integration_type
-  resource_id         = length(local.organization_id) > 0 ? local.organization_id : local.scanning_project_id
-  bucket_name         = google_storage_bucket.lacework_bucket[0].name
-  scanning_project_id = local.scanning_project_id
-  filter_list         = var.project_filter_list
-  scan_multi_volume   = var.scan_multi_volume
+  name                   = var.lacework_integration_name
+  resource_level         = var.integration_type
+  resource_id            = length(local.organization_id) > 0 ? local.organization_id : local.scanning_project_id
+  bucket_name            = google_storage_bucket.lacework_bucket[0].name
+  scanning_project_id    = local.scanning_project_id
+  filter_list            = var.project_filter_list
+  scan_multi_volume      = var.scan_multi_volume
   scan_stopped_instances = var.scan_stopped_instances
   credentials {
     client_id      = local.lacework_integration_service_account_json_key.client_id
@@ -281,9 +281,9 @@ resource "google_project_iam_member" "agentless_scan" {
 resource "google_cloud_run_v2_job" "agentless_orchestrate" {
   count = var.regional ? 1 : 0
 
-  name         = "${var.prefix}-service-${local.suffix}"
-  location     = local.region
-  project      = local.scanning_project_id
+  name     = "${var.prefix}-service-${local.suffix}"
+  location = local.region
+  project  = local.scanning_project_id
 
   template {
     template {
