@@ -127,6 +127,7 @@ resource "google_secret_manager_secret_iam_member" "member" {
   secret_id = google_secret_manager_secret.agentless_orchestrate[0].secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
+  depends_on = [google_service_account.agentless_orchestrate]
 }
 
 // Storage Bucket for Analysis Data
