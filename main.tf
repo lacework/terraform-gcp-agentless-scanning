@@ -79,6 +79,20 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
   filter_list         = var.project_filter_list
   scan_multi_volume   = var.scan_multi_volume
   scan_stopped_instances = var.scan_stopped_instances
+  dynamic "org_account_mappings" {
+    for_each = var.org_account_mappings
+    content {
+      default_lacework_account = org_account_mappings.value["default_lacework_account"]
+
+      dynamic "mapping" {
+        for_each = org_account_mappings.value["mapping"]
+        content {
+          lacework_account = mapping.value["lacework_account"]
+          aws_accounts     = mapping.value["gcp_projects"]
+        }
+      }
+    }
+  }
   credentials {
     client_id      = local.lacework_integration_service_account_json_key.client_id
     private_key_id = local.lacework_integration_service_account_json_key.private_key_id
