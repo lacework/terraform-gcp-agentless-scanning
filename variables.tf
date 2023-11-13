@@ -102,7 +102,7 @@ variable "scan_multi_volume" {
 variable "scan_stopped_instances" {
   type = bool
   description = "Whether to scan stopped instances. Defaults to `false`."
-  default = true
+  default = false
 }
 
 variable "scan_frequency_hours" {
