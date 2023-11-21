@@ -1,6 +1,8 @@
 provider "lacework" {}
 
-provider "google" {}
+provider "google" {
+  region = "us-central1"
+}
 
 module "lacework_gcp_agentless_scanning_org_single_region" {
   source = "../.."

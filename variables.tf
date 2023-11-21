@@ -93,6 +93,18 @@ variable "scan_host_vulnerabilities" {
   default     = true
 }
 
+variable "scan_multi_volume" {
+  type = bool
+  description = "Whether to scan secondary volumes. Defaults to `false`."
+  default = false
+}
+
+variable "scan_stopped_instances" {
+  type = bool
+  description = "Whether to scan stopped instances. Defaults to `false`."
+  default = true
+}
+
 variable "scan_frequency_hours" {
   type        = number
   description = "How often in hours the scan will run in hours. Defaults to `24`."

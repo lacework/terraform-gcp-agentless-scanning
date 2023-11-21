@@ -77,6 +77,8 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
   bucket_name         = google_storage_bucket.lacework_bucket[0].name
   scanning_project_id = local.scanning_project_id
   filter_list         = var.project_filter_list
+  scan_multi_volume   = var.scan_multi_volume
+  scan_stopped_instances = var.scan_stopped_instances
   credentials {
     client_id      = local.lacework_integration_service_account_json_key.client_id
     private_key_id = local.lacework_integration_service_account_json_key.private_key_id
@@ -281,7 +283,6 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
 
   name         = "${var.prefix}-service-${local.suffix}"
   location     = local.region
-  launch_stage = "BETA"
   project      = local.scanning_project_id
 
   template {
@@ -382,7 +383,7 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
     uri         = "https://${local.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${local.scanning_project_id}/jobs/${var.prefix}-service-${local.suffix}:run"
 
     oauth_token {
-      service_account_email = data.google_compute_default_service_account.default.email
+      service_account_email = local.agentless_orchestrate_service_account_email
     }
   }
 
