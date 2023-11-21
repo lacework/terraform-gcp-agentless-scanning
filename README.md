@@ -69,7 +69,7 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | <a name="input_agentless_scan_secret_id"></a> [agentless\_scan\_secret\_id](#input\_agentless\_scan\_secret\_id) | The ID of the Google Secret containing the Lacework Account and Auth Token | `string` | `""` | no |
 | <a name="input_agentless_scan_service_account_email"></a> [agentless\_scan\_service\_account\_email](#input\_agentless\_scan\_service\_account\_email) | The email of the service account for which to use during scan tasks. | `string` | `""` | no |
 | <a name="input_bucket_enable_ubla"></a> [bucket\_enable\_ubla](#input\_bucket\_enable\_ubla) | Boolean for enabling Uniform Bucket Level Access on the created bucket.  Default is `true`. | `bool` | `true` | no |
-| <a name="input_bucket_force_destroy"></a> [bucket\_force\_destroy](#input\_bucket\_force\_destroy) | Force destroy bucket (if disabled, terraform will not be able do destroy non-empty bucket) | `bool` | `true` | no |
+| <a name="input_bucket_force_destroy"></a> [bucket\_force\_destroy](#input\_bucket\_force\_destroy) | Force destroy bucket (if disabled, terraform will not be able to destroy non-empty bucket) | `bool` | `true` | no |
 | <a name="input_bucket_lifecycle_rule_age"></a> [bucket\_lifecycle\_rule\_age](#input\_bucket\_lifecycle\_rule\_age) | Number of days to keep agentless scan objects in bucket before deletion. | `number` | `30` | no |
 | <a name="input_custom_vpc_subnet"></a> [custom\_vpc\_subnet](#input\_custom\_vpc\_subnet) | The name of the custom Google Cloud VPC subnet to use for scanning compute resources | `string` | `""` | no |
 | <a name="input_global"></a> [global](#input\_global) | Whether or not to create global resources. Defaults to `false`. | `bool` | `false` | no |

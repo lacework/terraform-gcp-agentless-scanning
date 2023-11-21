@@ -94,15 +94,15 @@ variable "scan_host_vulnerabilities" {
 }
 
 variable "scan_multi_volume" {
-  type = bool
+  type        = bool
   description = "Whether to scan secondary volumes. Defaults to `false`."
-  default = false
+  default     = false
 }
 
 variable "scan_stopped_instances" {
-  type = bool
+  type        = bool
   description = "Whether to scan stopped instances. Defaults to `false`."
-  default = true
+  default     = true
 }
 
 variable "scan_frequency_hours" {
@@ -165,7 +165,7 @@ variable "bucket_enable_ubla" {
 variable "bucket_force_destroy" {
   type        = bool
   default     = true
-  description = "Force destroy bucket (if disabled, terraform will not be able do destroy non-empty bucket)"
+  description = "Force destroy bucket (if disabled, terraform will not be able to destroy non-empty bucket)"
 }
 
 variable "bucket_lifecycle_rule_age" {
