@@ -39,6 +39,10 @@ locals {
       "projectViewer:${local.scanning_project_id}"
     ]
   }) : ({})
+
+  version_file   = "${abspath(path.module)}/VERSION"
+  module_name    = basename(abspath(path.module))
+  module_version = fileexists(local.version_file) ? file(local.version_file) : ""
 }
 
 resource "random_id" "uniq" {
@@ -388,4 +392,9 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
   }
 
   depends_on = [google_project_service.required_apis]
+}
+
+data "lacework_metric_module" "lwmetrics" {
+  name    = local.module_name
+  version = local.module_version
 }

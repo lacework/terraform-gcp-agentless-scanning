@@ -13,14 +13,14 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12.31 |
 | <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.46 |
-| <a name="requirement_lacework"></a> [lacework](#requirement\_lacework) | ~> 1.3 |
+| <a name="requirement_lacework"></a> [lacework](#requirement\_lacework) | ~> 1.18 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_google"></a> [google](#provider\_google) | ~> 4.46 |
-| <a name="provider_lacework"></a> [lacework](#provider\_lacework) | ~> 1.3 |
+| <a name="provider_lacework"></a> [lacework](#provider\_lacework) | ~> 1.18 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
@@ -59,6 +59,7 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | [google_client_config.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config) | data source |
 | [google_compute_default_service_account.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_default_service_account) | data source |
 | [google_project.selected](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
+| [lacework_metric_module.lwmetrics](https://registry.terraform.io/providers/lacework/lacework/latest/docs/data-sources/metric_module) | data source |
 | [lacework_user_profile.current](https://registry.terraform.io/providers/lacework/lacework/latest/docs/data-sources/user_profile) | data source |
 
 ## Inputs
