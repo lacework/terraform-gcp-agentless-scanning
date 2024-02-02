@@ -41,7 +41,7 @@ locals {
   }) : ({})
 
   version_file   = "${abspath(path.module)}/VERSION"
-  module_name    = basename(abspath(path.module))
+  module_name    = "terraform-gcp-agentless-scanning"
   module_version = fileexists(local.version_file) ? file(local.version_file) : ""
 }
 
