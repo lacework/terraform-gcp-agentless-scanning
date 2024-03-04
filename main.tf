@@ -1,4 +1,7 @@
 locals {
+
+  final_project_filter_list = length(var.global_module_reference.project_filter_list)>0 ? var.global_module_reference.project_filter_list : var.project_filter_list
+
   scanning_project_id = length(var.scanning_project_id) > 0 ? var.scanning_project_id : data.google_project.selected[0].project_id
   organization_id     = length(var.organization_id) > 0 ? var.organization_id : (data.google_project.selected[0].org_id != null ? data.google_project.selected[0].org_id : "")
 
@@ -21,8 +24,8 @@ locals {
     "roles/run.invoker",
   ]) : []
 
-  included_projects = var.global ? toset([for project in var.project_filter_list : project if !(substr(project, 0, 1) == "-")]) : []
-  excluded_projects = var.global ? toset([for project in var.project_filter_list : project if substr(project, 0, 1) == "-"]) : []
+  included_projects = var.global ? toset([for project in local.final_project_filter_list : project if !(substr(project, 0, 1) == "-")]) : []
+  excluded_projects = var.global ? toset([for project in local.final_project_filter_list : project if substr(project, 0, 1) == "-"]) : []
 
   bucket_name = "${var.prefix}-bucket-${local.suffix}"
   bucket_roles = var.global ? ({
@@ -80,7 +83,7 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
   resource_id         = length(local.organization_id) > 0 ? local.organization_id : local.scanning_project_id
   bucket_name         = google_storage_bucket.lacework_bucket[0].name
   scanning_project_id = local.scanning_project_id
-  filter_list         = var.project_filter_list
+  filter_list         = local.final_project_filter_list
   scan_multi_volume   = var.scan_multi_volume
   scan_stopped_instances = var.scan_stopped_instances
   credentials {
@@ -348,7 +351,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
         }
         env {
           name  = "GCP_SCAN_LIST"
-          value = join(", ", var.project_filter_list)
+          value = join(", ", local.final_project_filter_list)
         }
         env {
           name  = "GCP_CUSTOM_SUBNETWORK"
