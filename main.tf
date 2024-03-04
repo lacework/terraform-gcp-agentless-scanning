@@ -1,6 +1,6 @@
 locals {
 
-  final_project_filter_list = length(var.global_module_reference.project_filter_list)>0 ? var.global_module_reference.project_filter_list : var.project_filter_list
+  final_project_filter_list = length(var.global_module_reference.filter_list)>0 ? var.global_module_reference.filter_list : var.project_filter_list
 
   scanning_project_id = length(var.scanning_project_id) > 0 ? var.scanning_project_id : data.google_project.selected[0].project_id
   organization_id     = length(var.organization_id) > 0 ? var.organization_id : (data.google_project.selected[0].org_id != null ? data.google_project.selected[0].org_id : "")

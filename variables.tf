@@ -201,7 +201,7 @@ variable "global_module_reference" {
     lacework_domain                             = string
     prefix                                      = string
     suffix                                      = string
-    project_filter_list                         = list(string)
+    filter_list                                 = list(string)
   })
   default = {
     agentless_orchestrate_service_account_email = ""
@@ -211,7 +211,7 @@ variable "global_module_reference" {
     lacework_domain                             = ""
     prefix                                      = ""
     suffix                                      = ""
-    project_filter_list                         = []
+    filter_list                                 = []
   }
   description = "A reference to the global lacework_gcp_agentless_scanning module for this account."
 }
