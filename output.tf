@@ -48,3 +48,8 @@ output "suffix" {
   value       = local.suffix
   description = "Suffix used to add uniqueness to resource names."
 }
+
+output "project_filter_list" {
+  value = local.final_project_filter_list
+  description = "The list of projects to scan in this module."
+}
