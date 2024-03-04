@@ -211,7 +211,7 @@ variable "global_module_reference" {
     lacework_domain                             = ""
     prefix                                      = ""
     suffix                                      = ""
-    project_filter_list                         = [ "" ]
+    project_filter_list                         = []
   }
   description = "A reference to the global lacework_gcp_agentless_scanning module for this account."
 }
