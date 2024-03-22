@@ -127,14 +127,24 @@ resource "google_secret_manager_secret_version" "agentless_orchestrate" {
 EOF
 }
 
-resource "google_secret_manager_secret_iam_member" "member" {
+resource "google_secret_manager_secret_iam_member" "member_orchestrate_service_account" {
   count = var.global ? 1 : 0
 
   project   = local.scanning_project_id
   secret_id = google_secret_manager_secret.agentless_orchestrate[0].secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
-  depends_on = [google_service_account.agentless_orchestrate]
+  depends_on = [ google_service_account.agentless_orchestrate ]
+}
+
+resource "google_secret_manager_secret_iam_member" "member_scan_service_account" {
+  count = var.global ? 1 : 0
+
+  project   = local.scanning_project_id
+  secret_id = google_secret_manager_secret.agentless_orchestrate[0].secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${local.agentless_scan_service_account_email}"
+  depends_on = [ google_service_account.agentless_scan ]
 }
 
 // Storage Bucket for Analysis Data
