@@ -192,6 +192,18 @@ variable "custom_vpc_subnet" {
   description = "The name of the custom Google Cloud VPC subnet to use for scanning compute resources"
 }
 
+variable "org_account_mappings" {
+  type = list(object({
+    default_lacework_account = string
+    mapping = list(object({
+      lacework_account = string
+      gcp_projects     = list(string)
+    }))
+  }))
+  default     = []
+  description = "Mapping of AWS accounts to Lacework accounts within a Lacework organization"
+}
+
 variable "global_module_reference" {
   type = object({
     agentless_orchestrate_service_account_email = string
