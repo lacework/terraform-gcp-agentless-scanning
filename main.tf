@@ -358,7 +358,15 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
           value = var.custom_vpc_subnet
         }
 
+        dynamic "env" {
+          for_each = var.additional_environment_variables
+          content {
+            name = env.value["name"]
+            value = env.value["value"]
+          }
+        }
       }
+
       service_account = local.agentless_orchestrate_service_account_email
       timeout         = "3600s"
     }

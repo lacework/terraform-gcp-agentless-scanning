@@ -73,6 +73,8 @@ module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
   regional = true
 
   custom_vpc_subnet = google_compute_subnetwork.awls_subnet_1.id
+  # example: how to disable public IP address on scanning VMs in GCP
+  additional_environment_variables = [{name="USE_PUBLIC_IPS", value="false"}]
 }
 
 module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
@@ -86,4 +88,7 @@ module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
   global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_use1
 
   custom_vpc_subnet = google_compute_subnetwork.awls_subnet_2.id
+
+  # example: how to disable public IP address on scanning VMs in GCP
+  additional_environment_variables = [{name="USE_PUBLIC_IPS", value="false"}]
 }

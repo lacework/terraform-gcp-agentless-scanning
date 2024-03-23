@@ -19,9 +19,9 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | ~> 4.46 |
-| <a name="provider_lacework"></a> [lacework](#provider\_lacework) | ~> 1.18 |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.84.0 |
+| <a name="provider_lacework"></a> [lacework](#provider\_lacework) | 1.18.1 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.0 |
 
 ## Modules
 
@@ -66,6 +66,7 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_additional_environment_variables"></a> [additional\_environment\_variables](#input\_additional\_environment\_variables) | Optional list of additional environment variables passed to the Cloud Run task. | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
 | <a name="input_agentless_orchestrate_service_account_email"></a> [agentless\_orchestrate\_service\_account\_email](#input\_agentless\_orchestrate\_service\_account\_email) | The email of the service account for which to use during scan tasks. | `string` | `""` | no |
 | <a name="input_agentless_scan_secret_id"></a> [agentless\_scan\_secret\_id](#input\_agentless\_scan\_secret\_id) | The ID of the Google Secret containing the Lacework Account and Auth Token | `string` | `""` | no |
 | <a name="input_agentless_scan_service_account_email"></a> [agentless\_scan\_service\_account\_email](#input\_agentless\_scan\_service\_account\_email) | The email of the service account for which to use during scan tasks. | `string` | `""` | no |
