@@ -17,6 +17,8 @@ locals {
   ]
 }
 
+// START: The following resources are provided for the integration tests only.
+// These are not needed for actual usages, see the README.md.
 resource "google_compute_network" "awls" {
   provider = google.use1
 
@@ -59,6 +61,8 @@ resource "google_compute_firewall" "rules" {
     ports    = ["443"]
   }
 }
+// END: This is the end of resource created needed for integration testing.
+// The above resources are created for testing purposes only.
 
 module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
   source = "../.."
