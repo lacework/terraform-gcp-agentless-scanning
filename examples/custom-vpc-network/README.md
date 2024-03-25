@@ -10,6 +10,8 @@ In this example we add Terraform modules to two Google Cloud regions.
   - Cloud Run Job
   - Cloud Scheduler Job
 
+We show how to use an existing subnet inside an existing VPC with name "existing-subnet-name".
+
 ## Sample Code
 
 ```hcl
@@ -46,7 +48,7 @@ module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
   global                    = true
   regional                  = true
 
-  custom_vpc_subnet = "existing-vpc-name"
+  custom_vpc_subnet = "existing-subnet-name"
 }
 
 module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
@@ -62,6 +64,6 @@ module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
   regional                = true
   global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_use1
 
-  custom_vpc_subnet = "existing-vpc-name"
+  custom_vpc_subnet = "existing-subnet-name"
 }
 ```
