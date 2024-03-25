@@ -89,6 +89,6 @@ module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
 
   custom_vpc_subnet = google_compute_subnetwork.awls_subnet_2.id
 
-  # example: how to disable public IP address on scanning VMs in GCP
-  additional_environment_variables = [{name="USE_PUBLIC_IPS", value="false"}]
+  # example: how to pass an environment variable to a cloud task
+  additional_environment_variables = [{name="EXAMPLE_ENV_VAR", value="something"}]
 }
