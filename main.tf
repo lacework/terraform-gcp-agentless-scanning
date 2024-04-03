@@ -1,6 +1,6 @@
 locals {
 
-  final_project_filter_list = length(var.global_module_reference.project_filter_list)>0 ? var.global_module_reference.project_filter_list : var.project_filter_list
+  final_project_filter_list = length(var.global_module_reference.project_filter_list) > 0 ? var.global_module_reference.project_filter_list : var.project_filter_list
 
   scanning_project_id = length(var.scanning_project_id) > 0 ? var.scanning_project_id : data.google_project.selected[0].project_id
   organization_id     = length(var.organization_id) > 0 ? var.organization_id : (data.google_project.selected[0].org_id != null ? data.google_project.selected[0].org_id : "")
@@ -78,13 +78,13 @@ resource "google_project_service" "required_apis" {
 resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" {
   count = var.global ? 1 : 0
 
-  name                = var.lacework_integration_name
-  resource_level      = var.integration_type
-  resource_id         = length(local.organization_id) > 0 ? local.organization_id : local.scanning_project_id
-  bucket_name         = google_storage_bucket.lacework_bucket[0].name
-  scanning_project_id = local.scanning_project_id
-  filter_list         = local.final_project_filter_list
-  scan_multi_volume   = var.scan_multi_volume
+  name                   = var.lacework_integration_name
+  resource_level         = var.integration_type
+  resource_id            = length(local.organization_id) > 0 ? local.organization_id : local.scanning_project_id
+  bucket_name            = google_storage_bucket.lacework_bucket[0].name
+  scanning_project_id    = local.scanning_project_id
+  filter_list            = local.final_project_filter_list
+  scan_multi_volume      = var.scan_multi_volume
   scan_stopped_instances = var.scan_stopped_instances
   credentials {
     client_id      = local.lacework_integration_service_account_json_key.client_id
@@ -130,21 +130,21 @@ EOF
 resource "google_secret_manager_secret_iam_member" "member_orchestrate_service_account" {
   count = var.global ? 1 : 0
 
-  project   = local.scanning_project_id
-  secret_id = google_secret_manager_secret.agentless_orchestrate[0].secret_id
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
-  depends_on = [ google_service_account.agentless_orchestrate ]
+  project    = local.scanning_project_id
+  secret_id  = google_secret_manager_secret.agentless_orchestrate[0].secret_id
+  role       = "roles/secretmanager.secretAccessor"
+  member     = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
+  depends_on = [google_service_account.agentless_orchestrate]
 }
 
 resource "google_secret_manager_secret_iam_member" "member_scan_service_account" {
   count = var.global ? 1 : 0
 
-  project   = local.scanning_project_id
-  secret_id = google_secret_manager_secret.agentless_orchestrate[0].secret_id
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${local.agentless_scan_service_account_email}"
-  depends_on = [ google_service_account.agentless_scan ]
+  project    = local.scanning_project_id
+  secret_id  = google_secret_manager_secret.agentless_orchestrate[0].secret_id
+  role       = "roles/secretmanager.secretAccessor"
+  member     = "serviceAccount:${local.agentless_scan_service_account_email}"
+  depends_on = [google_service_account.agentless_scan]
 }
 
 // Storage Bucket for Analysis Data
@@ -299,9 +299,9 @@ resource "google_project_iam_member" "agentless_scan" {
 resource "google_cloud_run_v2_job" "agentless_orchestrate" {
   count = var.regional ? 1 : 0
 
-  name         = "${var.prefix}-service-${local.suffix}"
-  location     = local.region
-  project      = local.scanning_project_id
+  name     = "${var.prefix}-service-${local.suffix}"
+  location = local.region
+  project  = local.scanning_project_id
 
   template {
     template {
@@ -371,7 +371,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
         dynamic "env" {
           for_each = var.additional_environment_variables
           content {
-            name = env.value["name"]
+            name  = env.value["name"]
             value = env.value["value"]
           }
         }

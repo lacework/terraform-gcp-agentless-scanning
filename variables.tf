@@ -24,8 +24,8 @@ variable "organization_id" {
   default     = ""
   description = "The organization ID, required if integration_type is set to ORGANIZATION"
   validation {
-    condition = can(regex("^[0-9]*$", var.organization_id))
-    error_message = "The organization id needs to be a number"
+    condition     = can(regex("^[0-9]*$", var.organization_id))
+    error_message = "The organization id needs to be a number."
   }
 }
 

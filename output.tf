@@ -50,6 +50,6 @@ output "suffix" {
 }
 
 output "project_filter_list" {
-  value = local.final_project_filter_list
+  value       = local.final_project_filter_list
   description = "The list of projects to scan in this module."
 }
