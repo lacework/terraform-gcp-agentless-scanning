@@ -416,6 +416,21 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
   depends_on = [google_project_service.required_apis]
 }
 
+resource "terraform_data" "execute_cloud_run_job" {
+  count = var.execute_job_at_deployment && var.regional ? 1 : 0
+
+  # execute cloud run job everytime terraform is run
+  triggers_replace = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "gcloud run jobs execute ${ google_cloud_run_v2_job.agentless_orchestrate[0].name } --region=${ local.region }"
+  }
+
+  depends_on = [google_cloud_run_v2_job.agentless_orchestrate]
+}
+
 data "lacework_metric_module" "lwmetrics" {
   name    = local.module_name
   version = local.module_version

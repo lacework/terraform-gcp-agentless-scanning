@@ -229,3 +229,8 @@ variable "additional_environment_variables" {
   description = "Optional list of additional environment variables passed to the Cloud Run task."
 }
 
+variable "execute_job_at_deployment" {
+  type = bool
+  description = "execute newly created cloud run job(s) immediately after deployment"
+  default = true
+}
