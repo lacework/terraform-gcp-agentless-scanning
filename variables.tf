@@ -232,5 +232,5 @@ variable "additional_environment_variables" {
 variable "execute_job_at_deployment" {
   type = bool
   description = "execute newly created cloud run job(s) immediately after deployment"
-  default = true
+  default = false
 }
