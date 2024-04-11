@@ -9,3 +9,5 @@ jobs:
   call-nightly-workflow:
     uses: lacework/oss-actions/.github/workflows/tf-nightly.yml@main
     secrets: inherit
+    with:
+      tf-version: '["1.4", "1.5"]'
