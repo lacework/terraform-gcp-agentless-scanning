@@ -10,4 +10,4 @@ jobs:
     uses: lacework/oss-actions/.github/workflows/tf-nightly.yml@main
     secrets: inherit
     with:
-      tf-version: '["1.5"]'
+      tf-versions: '["1.5"]'
