@@ -425,8 +425,8 @@ resource "terraform_data" "execute_cloud_run_job" {
   }
 
   provisioner "local-exec" {
-    command = "gcloud run jobs execute ${ google_cloud_run_v2_job.agentless_orchestrate[0].name } --region=${ local.region }"
-  }
+    command = "/bin/bash ${path.module}/start_cloud_run_job.sh ${google_cloud_run_v2_job.agentless_orchestrate[0].name} ${local.region}"
+}
 
   depends_on = [google_cloud_run_v2_job.agentless_orchestrate]
 }
