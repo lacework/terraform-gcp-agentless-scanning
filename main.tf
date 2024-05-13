@@ -46,6 +46,34 @@ locals {
   version_file   = "${abspath(path.module)}/VERSION"
   module_name    = "terraform-gcp-agentless-scanning"
   module_version = fileexists(local.version_file) ? file(local.version_file) : ""
+
+  /*
+    Google cloud scheduler service is not available in all regions, so alternatively it is deployed to a different region.
+    The target cloud run job still resides in the desired region.
+  */
+  unsupported_cloud_scheduler_region_replacements = {
+    us-east5 = "us-east1"
+    us-south1 = "us-central1"
+    northamerica-northeast2 = "northamerica-northeast1"
+    southamerica-west1 = "southamerica-east1"
+
+    europe-west10 = "europe-west1"
+    europe-west12 = "europe-west1"
+    europe-west4 = "europe-west1"
+    europe-west8 = "europe-west1"
+    europe-west9 = "europe-west1"
+
+    europe-north1 = "europe-central2"
+    europe-southwest1 = "europe-central2"
+    africa-south1 = "europe-central2"
+    me-central1 = "europe-central2"
+    me-central2 = "europe-central2"
+    me-west1 = "europe-central2"
+
+    asia-south2 = "asia-south1"
+    australia-southeast2 = "australia-southeast1"
+}
+  cloud_scheduler_region = lookup(local.unsupported_cloud_scheduler_region_replacements, local.region, local.region)
 }
 
 resource "random_id" "uniq" {
@@ -397,10 +425,11 @@ data "google_compute_default_service_account" "default" {
 resource "google_cloud_scheduler_job" "agentless_orchestrate" {
   count = var.regional ? 1 : 0
 
-  name        = "${var.prefix}-periodic-trigger-${local.suffix}"
+  name        = "${var.prefix}-periodic-trigger-${local.suffix}-${local.region}"
   description = "Invoke Lacework Agentless Workload Scanning on a schedule."
   project     = local.scanning_project_id
-  region      = local.region
+  // for unsupported regions, cloud scheduler is configured in a different region
+  region      = local.cloud_scheduler_region
   schedule    = "0 * * * *"
   time_zone   = "Etc/UTC"
 
