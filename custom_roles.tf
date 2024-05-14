@@ -16,6 +16,9 @@ resource "google_project_iam_custom_role" "agentless_orchestrate_monitored_proje
     "compute.machineTypes.get",
     "compute.zones.list",
     "resourcemanager.projects.get",
+    // Required for Resource Group v2
+    "resourcemanager.folders.get",
+    "resourcemanager.organizations.get",
   ]
 }
 
@@ -41,6 +44,8 @@ resource "google_organization_iam_custom_role" "agentless_orchestrate" {
     "compute.zones.list",
     "resourcemanager.folders.list",
     "resourcemanager.projects.list",
+    // Required for Resource Group v2
+    "resourcemanager.organizations.get",
   ]
 }
 
