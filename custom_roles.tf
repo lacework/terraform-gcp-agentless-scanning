@@ -24,7 +24,7 @@ resource "google_project_iam_custom_role" "agentless_orchestrate_monitored_proje
 // Role created at organization
 // Note this binding happens at the organization level because the custom role requires organization level permissions
 resource "google_organization_iam_custom_role" "agentless_orchestrate_monitored_project_resource_group" {
-  count = var.integration_type == "PROJECT" ? 1 : 0
+  count = var.global && (var.integration_type == "PROJECT") ? 1 : 0
 
   org_id  = var.organization_id
   role_id = replace("${var.prefix}-resource-group-${local.suffix}", "-", "_")
