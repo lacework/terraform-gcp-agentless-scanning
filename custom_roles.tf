@@ -16,7 +16,20 @@ resource "google_project_iam_custom_role" "agentless_orchestrate_monitored_proje
     "compute.machineTypes.get",
     "compute.zones.list",
     "resourcemanager.projects.get",
-    // Required for Resource Group v2
+  ]
+}
+
+// Scope : MONITORED_PROJECT
+// Use	 : Accessing Folders/Organizations for Resource Group v2
+// Role created at organization
+// Note this binding happens at the organization level because the custom role requires organization level permissions
+resource "google_organization_iam_custom_role" "agentless_orchestrate_monitored_project_resource_group" {
+  count = var.integration_type == "PROJECT" ? 1 : 0
+
+  org_id  = var.organization_id
+  role_id = replace("${var.prefix}-resource-group-${local.suffix}", "-", "_")
+  title   = "Lacework Agentless Workload Scanning Role for monitored project (Resource Group)"
+  permissions = [
     "resourcemanager.folders.get",
     "resourcemanager.organizations.get",
   ]
@@ -46,6 +59,7 @@ resource "google_organization_iam_custom_role" "agentless_orchestrate" {
     "resourcemanager.projects.list",
     // Required for Resource Group v2
     "resourcemanager.organizations.get",
+    "resourcemanager.folders.get",
   ]
 }
 
