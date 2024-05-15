@@ -221,7 +221,7 @@ module "lacework_agentless_scan_svc_account" {
   count = var.global ? 1 : 0
 
   source               = "lacework/service-account/gcp"
-  version              = "~> 1.0"
+  version              = "~> 2.0"
   create               = true
   service_account_name = local.lacework_integration_service_account_name
   project_id           = local.scanning_project_id
