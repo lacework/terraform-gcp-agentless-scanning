@@ -44,7 +44,7 @@ resource "google_organization_iam_custom_role" "agentless_orchestrate" {
   count = var.global && (var.integration_type == "ORGANIZATION") ? 1 : 0
 
   role_id = replace("${var.prefix}-snapshot-${local.suffix}", "-", "_")
-  org_id  = var.organization_id
+  org_id  = local.organization_id
   title   = "Lacework Agentless Workload Scanning Role for monitored organization (Organization Snapshots)"
   permissions = [
     "iam.roles.get",
