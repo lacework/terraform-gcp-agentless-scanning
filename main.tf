@@ -52,27 +52,27 @@ locals {
     The target cloud run job still resides in the desired region.
   */
   unsupported_cloud_scheduler_region_replacements = {
-    us-east5 = "us-east1"
-    us-south1 = "us-central1"
+    us-east5                = "us-east1"
+    us-south1               = "us-central1"
     northamerica-northeast2 = "northamerica-northeast1"
-    southamerica-west1 = "southamerica-east1"
+    southamerica-west1      = "southamerica-east1"
 
     europe-west10 = "europe-west1"
     europe-west12 = "europe-west1"
-    europe-west4 = "europe-west1"
-    europe-west8 = "europe-west1"
-    europe-west9 = "europe-west1"
+    europe-west4  = "europe-west1"
+    europe-west8  = "europe-west1"
+    europe-west9  = "europe-west1"
 
-    europe-north1 = "europe-central2"
+    europe-north1     = "europe-central2"
     europe-southwest1 = "europe-central2"
-    africa-south1 = "europe-central2"
-    me-central1 = "europe-central2"
-    me-central2 = "europe-central2"
-    me-west1 = "europe-central2"
+    africa-south1     = "europe-central2"
+    me-central1       = "europe-central2"
+    me-central2       = "europe-central2"
+    me-west1          = "europe-central2"
 
-    asia-south2 = "asia-south1"
+    asia-south2          = "asia-south1"
     australia-southeast2 = "australia-southeast1"
-}
+  }
   cloud_scheduler_region = lookup(local.unsupported_cloud_scheduler_region_replacements, local.region, local.region)
 }
 
@@ -267,6 +267,15 @@ resource "google_project_iam_member" "agentless_orchestrate_monitored_project" {
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
+// Orchestrate Service Account <-> Role Binding for Custom Role project-level resource group support
+resource "google_organization_iam_member" "agentless_orchestrate_monitored_project_resource_group" {
+  count = var.global && (var.integration_type == "PROJECT") ? 1 : 0
+
+  org_id = local.organization_id
+  role   = google_organization_iam_custom_role.agentless_orchestrate_monitored_project_resource_group[0].id
+  member = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
+}
+
 // Orchestrate Service Account <-> Role Binding for Custom Role created in Scanner Project
 resource "google_project_iam_member" "agentless_orchestrate" {
   count = var.global ? 1 : 0
@@ -429,9 +438,9 @@ resource "google_cloud_scheduler_job" "agentless_orchestrate" {
   description = "Invoke Lacework Agentless Workload Scanning on a schedule."
   project     = local.scanning_project_id
   // for unsupported regions, cloud scheduler is configured in a different region
-  region      = local.cloud_scheduler_region
-  schedule    = "0 * * * *"
-  time_zone   = "Etc/UTC"
+  region    = local.cloud_scheduler_region
+  schedule  = "0 * * * *"
+  time_zone = "Etc/UTC"
 
   http_target {
     http_method = "POST"
@@ -454,7 +463,7 @@ resource "terraform_data" "execute_cloud_run_job" {
   }
 
   provisioner "local-exec" {
-    command = "gcloud run jobs execute ${ google_cloud_run_v2_job.agentless_orchestrate[0].name } --region=${ local.region }"
+    command = "gcloud run jobs execute ${google_cloud_run_v2_job.agentless_orchestrate[0].name} --region=${local.region}"
   }
 
   depends_on = [google_cloud_run_v2_job.agentless_orchestrate]
