@@ -19,9 +19,9 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | ~> 4.46 |
-| <a name="provider_lacework"></a> [lacework](#provider\_lacework) | ~> 1.18 |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.84.0 |
+| <a name="provider_lacework"></a> [lacework](#provider\_lacework) | 1.15.1 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
 | <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
@@ -37,7 +37,9 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | [google_cloud_run_v2_job.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_job) | resource |
 | [google_cloud_scheduler_job.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_scheduler_job) | resource |
 | [google_organization_iam_custom_role.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/organization_iam_custom_role) | resource |
+| [google_organization_iam_custom_role.agentless_orchestrate_monitored_project_resource_group](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/organization_iam_custom_role) | resource |
 | [google_organization_iam_member.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/organization_iam_member) | resource |
+| [google_organization_iam_member.agentless_orchestrate_monitored_project_resource_group](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/organization_iam_member) | resource |
 | [google_project_iam_custom_role.agentless_orchestrate](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_custom_role) | resource |
 | [google_project_iam_custom_role.agentless_orchestrate_monitored_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_custom_role) | resource |
 | [google_project_iam_custom_role.agentless_scan](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_custom_role) | resource |
