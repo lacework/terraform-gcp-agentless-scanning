@@ -26,7 +26,7 @@ resource "google_project_iam_custom_role" "agentless_orchestrate_monitored_proje
 resource "google_organization_iam_custom_role" "agentless_orchestrate_monitored_project_resource_group" {
   count = var.global && (var.integration_type == "PROJECT") ? 1 : 0
 
-  org_id  = var.organization_id
+  org_id  = local.organization_id
   role_id = replace("${var.prefix}-resource-group-${local.suffix}", "-", "_")
   title   = "Lacework Agentless Workload Scanning Role for monitored project (Resource Group)"
   permissions = [

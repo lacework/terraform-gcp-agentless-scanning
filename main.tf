@@ -3,7 +3,7 @@ locals {
   final_project_filter_list = length(var.global_module_reference.project_filter_list) > 0 ? var.global_module_reference.project_filter_list : var.project_filter_list
 
   scanning_project_id = length(var.scanning_project_id) > 0 ? var.scanning_project_id : data.google_project.selected[0].project_id
-  organization_id     = length(var.organization_id) > 0 ? var.organization_id : (data.google_project.selected[0].org_id != null ? data.google_project.selected[0].org_id : "")
+  organization_id     = length(var.organization_id) > 0 ? var.organization_id : (length(data.google_project.selected) > 0 && data.google_project.selected[0].org_id != null ? data.google_project.selected[0].org_id : "")
 
   agentless_orchestrate_service_account_email = var.global ? google_service_account.agentless_orchestrate[0].email : (length(var.global_module_reference.agentless_orchestrate_service_account_email) > 0 ? var.global_module_reference.agentless_orchestrate_service_account_email : var.agentless_orchestrate_service_account_email)
   agentless_scan_service_account_email        = var.global ? google_service_account.agentless_scan[0].email : (length(var.global_module_reference.agentless_scan_service_account_email) > 0 ? var.global_module_reference.agentless_scan_service_account_email : var.agentless_scan_service_account_email)
@@ -84,8 +84,9 @@ data "lacework_user_profile" "current" {}
 
 data "google_client_config" "default" {}
 
+// if the scanning project id is not provided, use the project specified in the provider
 data "google_project" "selected" {
-  count = length(var.scanning_project_id) > 0 ? (length(var.organization_id) > 0 ? 0 : 1) : 1
+  count = length(var.scanning_project_id) > 0 ? 0 : 1
 }
 
 resource "google_project_service" "required_apis" {
@@ -253,7 +254,7 @@ resource "google_service_account" "agentless_orchestrate" {
 resource "google_organization_iam_member" "agentless_orchestrate" {
   count = var.global && (var.integration_type == "ORGANIZATION") ? 1 : 0
 
-  org_id = var.organization_id
+  org_id = local.organization_id
   role   = google_organization_iam_custom_role.agentless_orchestrate[0].id
   member = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
