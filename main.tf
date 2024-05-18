@@ -109,7 +109,7 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
 
   name                   = var.lacework_integration_name
   resource_level         = var.integration_type
-  resource_id            = length(local.organization_id) > 0 ? local.organization_id : local.scanning_project_id
+  resource_id            = var.integration_type == "ORGANIZATION" ? local.organization_id : local.scanning_project_id
   bucket_name            = google_storage_bucket.lacework_bucket[0].name
   scanning_project_id    = local.scanning_project_id
   filter_list            = local.final_project_filter_list
