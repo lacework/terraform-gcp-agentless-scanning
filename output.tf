@@ -53,3 +53,8 @@ output "project_filter_list" {
   value       = local.final_project_filter_list
   description = "The list of projects to scan in this module."
 }
+
+output "lacework_integration_guid" {
+  value       = var.global ? lacework_integration_gcp_agentless_scanning.lacework_cloud_account[0].intg_guid : null
+  description = "GUID of the created Lacework integration"
+}

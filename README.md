@@ -112,6 +112,7 @@ A Terraform Module to configure the Lacework Agentless Scanner.
 | <a name="output_bucket_name"></a> [bucket\_name](#output\_bucket\_name) | The storage bucket name for Agentless Workload Scanning data. |
 | <a name="output_lacework_account"></a> [lacework\_account](#output\_lacework\_account) | Lacework Account Name for Integration. |
 | <a name="output_lacework_domain"></a> [lacework\_domain](#output\_lacework\_domain) | Lacework Domain Name for Integration. |
+| <a name="output_lacework_integration_guid"></a> [lacework\_integration\_guid](#output\_lacework\_integration\_guid) | GUID of the created Lacework integration |
 | <a name="output_prefix"></a> [prefix](#output\_prefix) | Prefix used to add uniqueness to resource names. |
 | <a name="output_project_filter_list"></a> [project\_filter\_list](#output\_project\_filter\_list) | The list of projects to scan in this module. |
 | <a name="output_service_account_name"></a> [service\_account\_name](#output\_service\_account\_name) | The service account name for Lacework. |
