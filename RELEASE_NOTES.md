@@ -1,10 +1,7 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v2.0.0`.
+Another day, another release. These are the release notes for the version `v2.1.0`.
 
-## Breaking Changes 
-* chore: upgrade gcp version requirements (#76) (Ao Zhang)([e6d45eb](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/e6d45eb4b826a5d5cdd91392469176fccc31d4ce)) This updates the dependency on provider `lacework/service-account/gcp` from 1.0 to 2.0.
-## Bug Fixes
-* fix: use right resource id in project-level intg (#78) (Ao Zhang)([92ae5fe](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/92ae5fecc6a7fa0b00b8bd3ce98b1ba8d895df1e))
+## Features
+* feat(GROW-2928): Add an output to capture Lacework integration GUID (#80) (Lei Jin)([e10ebf2](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/e10ebf2acdc307a771d6d583e19e22c814b067fb))
 ## Other Changes
-* chore: upgrade gcp version requirements (#76) (Ao Zhang)([e6d45eb](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/e6d45eb4b826a5d5cdd91392469176fccc31d4ce))
-* ci: version bump to v1.0.1-dev (Lacework)([bf89798](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/bf89798f1a85f333ac33ff7221440beb04c48ca0))
+* ci: version bump to v2.0.1-dev (Lacework)([b36316e](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/b36316e5e1ca0f5e46fb62a01d897c982115bed7))
