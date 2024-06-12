@@ -69,12 +69,13 @@ module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
 
   project_filter_list = local.project_filter_list
 
-  global   = true
-  regional = true
+  global          = true
+  regional        = true
+  organization_id = "your_organization_id"
 
   custom_vpc_subnet = google_compute_subnetwork.awls_subnet_1.id
   # example: passing an environment variable to the cloud run task
-  additional_environment_variables = [{name="EXAMPLE_ENV_VAR", value="something"}]
+  additional_environment_variables = [{ name = "EXAMPLE_ENV_VAR", value = "something" }]
 }
 
 module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
@@ -84,11 +85,13 @@ module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
     google = google.usc1
   }
 
-  regional                = true
+  regional        = true
+  organization_id = "your_organization_id"
+
   global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_use1
 
   custom_vpc_subnet = google_compute_subnetwork.awls_subnet_2.id
 
   # example: how to pass an environment variable to a cloud task
-  additional_environment_variables = [{name="EXAMPLE_ENV_VAR", value="something"}]
+  additional_environment_variables = [{ name = "EXAMPLE_ENV_VAR", value = "something" }]
 }
