@@ -71,7 +71,7 @@ module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
 
   global          = true
   regional        = true
-  organization_id = "your_organization_id"
+  organization_id = "1234567890"
 
   custom_vpc_subnet = google_compute_subnetwork.awls_subnet_1.id
   # example: passing an environment variable to the cloud run task
@@ -86,7 +86,7 @@ module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
   }
 
   regional        = true
-  organization_id = "your_organization_id"
+  organization_id = "1234567890"
 
   global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_use1
 
