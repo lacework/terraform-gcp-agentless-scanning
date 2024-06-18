@@ -26,8 +26,10 @@ module "lacework_gcp_agentless_scanning_project_multi_region_use1" {
 
   project_filter_list = local.project_filter_list
 
-  global                    = true
-  regional                  = true
+  global          = true
+  regional        = true
+  organization_id = "1234567890"
+
   lacework_integration_name = "agentless_from_terraform"
 }
 
@@ -38,6 +40,8 @@ module "lacework_gcp_agentless_scanning_project_multi_region_usc1" {
     google = google.usc1
   }
 
-  regional                = true
+  regional        = true
+  organization_id = "1234567890"
+
   global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_use1
 }
