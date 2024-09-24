@@ -1,6 +1,7 @@
 locals {
 
   final_project_filter_list = length(var.global_module_reference.project_filter_list) > 0 ? var.global_module_reference.project_filter_list : var.project_filter_list
+  integration_type = length(var.global_module_reference.integration_type) > 0 ? var.global_module_reference.integration_type: var.integration_type
 
   scanning_project_id = length(var.scanning_project_id) > 0 ? var.scanning_project_id : data.google_project.selected[0].project_id
   organization_id     = length(var.organization_id) > 0 ? var.organization_id : (length(data.google_project.selected) > 0 && data.google_project.selected[0].org_id != null ? data.google_project.selected[0].org_id : "")
@@ -108,8 +109,8 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
   count = var.global ? 1 : 0
 
   name                   = var.lacework_integration_name
-  resource_level         = var.integration_type
-  resource_id            = var.integration_type == "ORGANIZATION" ? local.organization_id : local.scanning_project_id
+  resource_level         = local.integration_type
+  resource_id            = local.integration_type == "ORGANIZATION" ? local.organization_id : local.scanning_project_id
   bucket_name            = google_storage_bucket.lacework_bucket[0].name
   scanning_project_id    = local.scanning_project_id
   filter_list            = local.final_project_filter_list
@@ -252,7 +253,7 @@ resource "google_service_account" "agentless_orchestrate" {
 
 // Orchestrate Service Account <-> Role Binding for Custom Role created in Organization
 resource "google_organization_iam_member" "agentless_orchestrate" {
-  count = var.global && (var.integration_type == "ORGANIZATION") ? 1 : 0
+  count = var.global && (local.integration_type == "ORGANIZATION") ? 1 : 0
 
   org_id = local.organization_id
   role   = google_organization_iam_custom_role.agentless_orchestrate[0].id
@@ -270,7 +271,7 @@ resource "google_project_iam_member" "agentless_orchestrate_monitored_project" {
 
 // Orchestrate Service Account <-> Role Binding for Custom Role project-level resource group support
 resource "google_organization_iam_member" "agentless_orchestrate_monitored_project_resource_group" {
-  count = var.global && (var.integration_type == "PROJECT") ? 1 : 0
+  count = var.global && (local.integration_type == "PROJECT") ? 1 : 0
 
   org_id = local.organization_id
   role   = google_organization_iam_custom_role.agentless_orchestrate_monitored_project_resource_group[0].id
@@ -395,7 +396,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
         }
         env {
           name  = "GCP_SCAN_SCOPE"
-          value = var.integration_type
+          value = local.integration_type
         }
         env {
           name  = "GCP_SCAN_LIST"
