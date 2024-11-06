@@ -1,8 +1,5 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v2.1.2`.
+Another day, another release. These are the release notes for the version `v2.1.3`.
 
-## Bug Fixes
-* fix: pass integration type to all modules for multi region deployments (#87) (ammarekbote)([038a792](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/038a792a49ed8d7dc125a5863210a1c36b4b7e5d))
 ## Other Changes
-* chore(GROW-2952): add codeowners (#86) (Matt Cadorette)([5376d3d](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/5376d3d516cb38556803bdb29adf9e8a6fe65f21))
-* ci: version bump to v2.1.2-dev (Lacework)([c892f2a](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/c892f2a508c0a4945852b1f6ba22e765ecfbc05c))
+* ci: version bump to v2.1.3-dev (Lacework)([87590e9](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/87590e9b5050058b1f37f9482c0934beae479b78))
