@@ -60,6 +60,7 @@ resource "google_organization_iam_custom_role" "agentless_orchestrate" {
     // Required for Resource Group v2
     "resourcemanager.organizations.get",
     "resourcemanager.folders.get",
+    "resourcemanager.projects.get",
   ]
 }
 
