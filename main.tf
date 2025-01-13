@@ -341,6 +341,7 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
   name     = "${var.prefix}-service-${local.suffix}"
   location = local.region
   project  = local.scanning_project_id
+  deletion_protection = false
 
   template {
     template {
