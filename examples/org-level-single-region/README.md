@@ -12,17 +12,51 @@ In this example we add Terraform modules to one Google Cloud region.
 
 ## Sample Code
 
+Define your `versions.tf` as follows:
 ```hcl
-provider "lacework" {}
+terraform {
+  required_version = ">= 1.5"
 
-provider "google" {}
+  required_providers {
+    lacework = {
+      source  = "lacework/lacework"
+    }
+  }
+}
+```
+
+Define your `main.tf` as follows:
+```hcl
+# Set your Lacework profile here. With the Lacework CLI, use 
+# `lacework configure list` to get a list of available profiles.
+provider "lacework" {
+  profile = "lw_agentless"
+}
+
+provider "google" {
+  # Set the ID of the project where the scanning resources are hosted.
+  project = <your-project-id>
+
+  # Set the region where the scanning resources are hosted.
+  region = <region>
+}
 
 module "lacework_gcp_agentless_scanning_org_single_region" {
   source  = "lacework/agentless-scanning/gcp"
-  version = "~> 0.1"
+  version = "~> 2.0"
+
+  # Provide a list of Google Cloud projects and/or folders that you want to monitor here.
+  # For projects, enter the project ID. 
+  # If the project_filter_list is omitted, all projects and folders in the organization are scanned.
+  #project_filter_list = [
+  #  "monitored-project-1",
+  #  "monitored-project-2",
+  #  "folder/monitored-folder-1",
+  #  "folder/monitored-folder-2
+  #]
 
   integration_type = "ORGANIZATION"
-  organization_id  = "123456789012"
+  organization_id  = <your-org-id>
 
   global                    = true
   regional                  = true
