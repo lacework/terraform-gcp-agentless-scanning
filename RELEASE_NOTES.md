@@ -1,8 +1,7 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v2.1.4`.
+Another day, another release. These are the release notes for the version `v2.1.5`.
 
 ## Bug Fixes
-* fix: add get project permission to org snapshot role (#91) (Timothy Nguyen)([9ab4bb5](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/9ab4bb5e1e3db1fdadaa41293673ba30d6396cfc))
+* fix: update Terraform examples (#94) (Joseph Wilder)([8a28834](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/8a28834527e69f7874ed73bd0d9dcb2dc0a6e911))
 ## Other Changes
-* chore: Set deletion_protection to false for rollback (#92) (Lei Jin)([a423507](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/a4235076e526ef6bc410d22bb832e8de088a73d2))
-* ci: version bump to v2.1.4-dev (Lacework)([0d638c6](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/0d638c6a83cfc4af36536061ca3c25541ffad825))
+* ci: version bump to v2.1.5-dev (Lacework)([88ddcfc](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/88ddcfc7534228e35280b7020f8bbf52a216e2cf))
