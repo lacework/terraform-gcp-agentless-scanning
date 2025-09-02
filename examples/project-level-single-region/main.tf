@@ -14,7 +14,6 @@ module "lacework_gcp_agentless_scanning_project_single_region" {
 
   global          = true
   regional        = true
-  organization_id = "1234567890"
 
   lacework_integration_name = "agentless_from_terraform"
 }

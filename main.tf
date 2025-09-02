@@ -269,15 +269,6 @@ resource "google_project_iam_member" "agentless_orchestrate_monitored_project" {
   member  = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
 }
 
-// Orchestrate Service Account <-> Role Binding for Custom Role project-level resource group support
-resource "google_organization_iam_member" "agentless_orchestrate_monitored_project_resource_group" {
-  count = var.global && (local.integration_type == "PROJECT") ? 1 : 0
-
-  org_id = local.organization_id
-  role   = google_organization_iam_custom_role.agentless_orchestrate_monitored_project_resource_group[0].id
-  member = "serviceAccount:${local.agentless_orchestrate_service_account_email}"
-}
-
 // Orchestrate Service Account <-> Role Binding for Custom Role created in Scanner Project
 resource "google_project_iam_member" "agentless_orchestrate" {
   count = var.global ? 1 : 0

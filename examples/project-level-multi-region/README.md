@@ -73,7 +73,6 @@ module "lacework_gcp_agentless_scanning_project_multi_region_<alias1>" {
 
   global                    = true
   regional                  = true
-  organization_id           = <your-org-id>
   lacework_integration_name = "agentless_from_terraform"
 }
 
@@ -86,7 +85,6 @@ module "lacework_gcp_agentless_scanning_project_multi_region_<alias2>" {
   }
 
   regional                = true
-  organization_id         = <your-org-id>
   global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_<alias1>
 }
 ```
