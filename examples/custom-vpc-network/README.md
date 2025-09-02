@@ -115,7 +115,6 @@ module "lacework_gcp_agentless_scanning_project_multi_region_<alias1>" {
 
   project_filter_list = local.project_filter_list
 
-  organization_id  = <your-org-id>
   global                    = true
   regional                  = true
 
@@ -132,7 +131,6 @@ module "lacework_gcp_agentless_scanning_project_multi_region_<alias2>" {
 
   project_filter_list = local.project_filter_list
 
-  organization_id  = <your-org-id>
   regional                = true
   global_module_reference = module.lacework_gcp_agentless_scanning_project_multi_region_use1
 
