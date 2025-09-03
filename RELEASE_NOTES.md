@@ -1,7 +1,7 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v2.1.6`.
+Another day, another release. These are the release notes for the version `v2.1.7`.
 
 ## Bug Fixes
-* fix(LINK-4116): do not require org level permissions for project level integrations. (#96) (Joseph Wilder)([041b661](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/041b66160bd72297e6f024dd3b256c23835b66cb))
+* fix: only enforce org_id check for org level integrations (#99) (Joseph Wilder)([39261d8](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/39261d8f610098ec85c53b9b1f49129cd0ce7da2))
 ## Other Changes
-* ci: version bump to v2.1.6-dev (Lacework)([1b9271b](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/1b9271b29f66826328c9db23606b2b09d3e8c603))
+* ci: version bump to v2.1.7-dev (Lacework)([777a678](https://github.com/lacework/terraform-gcp-agentless-scanning/commit/777a6784fa0e451e4621ed6e6bc19f8c1bc2c563))
