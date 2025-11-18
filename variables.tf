@@ -62,7 +62,7 @@ variable "suffix" {
   default     = ""
 
   validation {
-    condition     = length(var.suffix) == 0 || length(var.suffix) > 4
+    condition     = length(var.suffix) == 0 || length(var.suffix) >= 4
     error_message = "If the suffix value is set then it must be at least 4 characters long."
   }
 }
