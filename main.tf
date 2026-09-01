@@ -249,6 +249,17 @@ resource "google_service_account" "agentless_orchestrate" {
   project      = local.scanning_project_id
 
   depends_on = [google_project_service.required_apis]
+
+  lifecycle {
+    // `-orchestrate-` is the longest infix of any resource name in this module, so if this
+    // service account ID fits GCP's 30-character limit, every other resource name fits too.
+    // `var.suffix`'s own validation can't see `var.prefix` on Terraform < 1.9, and neither
+    // can see the random default, so the combined check lives here where `local.suffix` is resolved.
+    precondition {
+      condition     = length("${var.prefix}-orchestrate-${local.suffix}") <= 30
+      error_message = "\"${var.prefix}-orchestrate-${local.suffix}\" exceeds GCP's 30-character limit. len(prefix) + len(suffix) must be <= 17."
+    }
+  }
 }
 
 // Orchestrate Service Account <-> Role Binding for Custom Role created in Organization
