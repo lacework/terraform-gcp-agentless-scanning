@@ -45,6 +45,12 @@ variable "project_filter_list" {
   description = "A list of projects to include/exclude for integration."
 }
 
+variable "filter_query_text" {
+  type        = string
+  default     = ""
+  description = "The LQL query to constrain the scanning to specific resources. If left blank, Lacework will scan all resources available to the account or organization. For more information, see [Limit Scanned Workloads](https://docs.lacework.net/onboarding/lacework-console-agentless-workload-scanning#aws---limit-scanned-workloads)."
+}
+
 variable "prefix" {
   type        = string
   description = "A string to be prefixed to the name of all new resources."
