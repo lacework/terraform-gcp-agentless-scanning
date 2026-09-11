@@ -114,6 +114,7 @@ resource "lacework_integration_gcp_agentless_scanning" "lacework_cloud_account" 
   bucket_name            = google_storage_bucket.lacework_bucket[0].name
   scanning_project_id    = local.scanning_project_id
   filter_list            = local.final_project_filter_list
+  query_text             = var.filter_query_text
   scan_multi_volume      = var.scan_multi_volume
   scan_stopped_instances = var.scan_stopped_instances
   credentials {
