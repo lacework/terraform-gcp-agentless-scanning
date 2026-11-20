@@ -181,7 +181,7 @@ variable "bucket_lifecycle_rule_age" {
 variable "labels" {
   type        = map(string)
   default     = {}
-  description = "Set of labels which will be added to the resources managed by the module."
+  description = "Set of labels which will be added to the resources managed by the module, in addition to the lwtag_sidekick and lwtag_lacework_agentless labels the module always sets."
 }
 
 variable "lacework_integration_service_account_name" {

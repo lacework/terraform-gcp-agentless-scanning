@@ -1,4 +1,13 @@
 locals {
+  # Labels put on every resource of this module that supports them, so AWLS
+  # resources can be found, costed and cleaned up by label (AWLS2-475). Same
+  # markers the AWS module sets as tags and sidekick sets on the scan disks
+  # and instances it creates; GCP label keys must be lowercase. A user label
+  # of the same name wins.
+  labels = merge({
+    lwtag_sidekick           = "1"
+    lwtag_lacework_agentless = "1"
+  }, var.labels)
 
   final_project_filter_list = length(var.global_module_reference.project_filter_list) > 0 ? var.global_module_reference.project_filter_list : var.project_filter_list
   integration_type = length(var.global_module_reference.integration_type) > 0 ? var.global_module_reference.integration_type: var.integration_type
@@ -139,7 +148,7 @@ resource "google_secret_manager_secret" "agentless_orchestrate" {
     }
   }
 
-  labels = merge(var.labels)
+  labels = local.labels
 
   depends_on = [google_project_service.required_apis]
 }
@@ -200,7 +209,7 @@ resource "google_storage_bucket" "lacework_bucket" {
     }
   }
 
-  labels = merge(var.labels)
+  labels = local.labels
 
   depends_on = [google_project_service.required_apis]
 }
@@ -345,7 +354,12 @@ resource "google_cloud_run_v2_job" "agentless_orchestrate" {
   project  = local.scanning_project_id
   deletion_protection = false
 
+  labels = local.labels
+
   template {
+    # Labels for each execution the scheduler starts.
+    labels = local.labels
+
     template {
       containers {
         image = var.image_url
